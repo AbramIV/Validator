@@ -1,0 +1,1 @@
+pyuic6 /home/develpment/AIV/Projects/Pokayoke/GUI/Qt.ui -o /home/develpment/AIV/Projects/Pokayoke/GUI/Qt.py
