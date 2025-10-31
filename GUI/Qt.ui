@@ -28,7 +28,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>Validacion</string>
+   <string>Validacion ZKW</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -59,7 +59,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:#84bcf0;color:darkblack;text-align: center;</string>
+     <string notr="true">background:#84bcf0;color:darkblack;text-align: center;border-radius: 10px;</string>
     </property>
     <property name="placeholderText">
      <string/>
@@ -104,7 +104,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:gray;color:black</string>
+     <string notr="true">background:gray;color:black;border-radius: 10px;</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::Box</enum>
@@ -155,7 +155,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:gray;color:black;border-color:black</string>
+     <string notr="true">background:gray;color:black;border-color:black;border-radius: 10px;</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::Box</enum>
@@ -185,7 +185,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:gray;color:black</string>
+     <string notr="true">background:gray;color:black;border-radius: 10px;</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::Box</enum>
@@ -212,7 +212,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:gray;color:black</string>
+     <string notr="true">background:gray;color:black;border-radius: 10px;</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::Box</enum>
