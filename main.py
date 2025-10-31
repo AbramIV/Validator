@@ -10,8 +10,6 @@ logging.basicConfig(filename='logs.log', level=logging.INFO, format='%(asctime)s
 logger = logging.getLogger("Logger")
 code = 0
 
-# make HTTP requests async
-
 if __name__ == '__main__':
     logger.info("Application started.")
 

@@ -33,10 +33,10 @@ class Worker():
         self.qr1 = ""
         self.qr2 = ""
         self.qr3 = ""
+        self.side = ""
         self.url = ""
         self.mistake = MistakeType.Nope
         self.error = False
-        self.side = ""
 
         try:
             self.device = USB5860(DEVICE_DESCRIPTION, PROFILE_PATH)
@@ -55,7 +55,7 @@ class Worker():
         if self.shift.currentStep.type == StepType.Fill:
             if self.sensors_sum == MAX_POSITIONS_COUNT:
                 self.client.error = False
-                self.shift.nextStep(StepType.Pick)
+                self.shift.step(StepType.Pick)
                 self.sensors_last_sum = self.sensors_sum
                 self.message = "Elige uno parte!"
                 if self.mistake == MistakeType.MoreThanOneTaken:
@@ -85,7 +85,7 @@ class Worker():
                     else:
                         self.message = "Esta parte de la derecha!\n"
                         self.side = "RH"
-                    self.shift.nextStep(StepType.Scan)
+                    self.shift.step(StepType.Scan)
                     self.scanner.reset()
                     self.message += "Escanear el codigo 1!"
                     self.sensors_last_sum = self.sensors_sum
@@ -115,7 +115,7 @@ class Worker():
                     else:
                         self.url = f"http://{self.IP}/Route/to/Define?productSerial1={self.qr1}&productSerial2={self.qr2}&side={self.side}"
                         self.mistake = MistakeType.Nope
-                        self.shift.nextStep(StepType.Validate)
+                        self.shift.step(StepType.Validate)
                         self.message = "Validacion, espera..."
                         self.scanCount += 1
                 else:
@@ -127,9 +127,8 @@ class Worker():
                         self.url = f"http://{self.IP}/Route/to/Define?productSerial={self.qr3}&side={self.side}"
                         self.mistake = MistakeType.Nope
                         self.scanCount = 0
-                        self.shift.nextStep(StepType.Validate)
+                        self.shift.step(StepType.Validate)
                         self.message = "Validacion, espera..."
-                        self.scanCount = 0 
                 self.scanner.reset()
                 self.last_input = self.input
                 return
@@ -137,11 +136,11 @@ class Worker():
         if self.shift.currentStep.type == StepType.Validate:
             if self.validateCount < 1:
                 if self.client.get(self.url):
-                    if self.isValid():
+                    if self.is_valid():
                         if self.client.code == requests.codes.ok:
                             self.device.setOutput(Output.Print.value)
                             self.message = "Escanear el codigo impreso!"
-                            self.shift.nextStep(StepType.Scan)
+                            self.shift.step(StepType.Scan)
                             self.validateCount += 1      
                         else:
                             self.logger.warning(self.client.message)
@@ -153,7 +152,7 @@ class Worker():
                                 self.shift = Shift(StepType.Pick)
                                 self.message = "No valido! Elige uno parte."            
                 else:
-                    if self.isValid():
+                    if self.is_valid():
                         self.logger.error(self.client.message)                    
                         if self.sensors_sum == 0:
                             self.shift.save()
@@ -164,10 +163,14 @@ class Worker():
                             self.shift = Shift(StepType.Pick)
             else:
                 if self.client.get(self.url):   
-                    if self.isValid():    
+                    if self.is_valid():    
                         if self.client.code == requests.codes.ok:
-                            if self.sensors_sum == 0: self.shift = Shift(StepType.Fill)
-                            else: self.shift = Shift(StepType.Pick)
+                            if self.sensors_sum == 0: 
+                                self.shift = Shift(StepType.Fill)
+                                self.message = "Instalar todos partes."
+                            else: 
+                                self.shift = Shift(StepType.Pick)
+                                self.message = "Elige uno parte!"
                         else:
                             if self.sensors_sum == 0:
                                 self.message = "No valido! Instalar todos partes."
@@ -177,7 +180,7 @@ class Worker():
                                 self.shift = Shift(StepType.Pick)
                                 self.message = "No valido! Elige uno parte." 
                 else: 
-                    if self.isValid():
+                    if self.is_valid():
                         self.logger.error(self.client.message)                    
                         if self.sensors_sum == 0:
                             self.shift.save()
@@ -189,7 +192,7 @@ class Worker():
         
         self.last_input = self.input
 
-    def isValid(self):
+    def is_valid(self):
         if self.sensors_last_sum != self.sensors_sum:
             if self.sensors_last_sum > self.sensors_sum:
                 self.mistake = MistakeType.MoreThanOneTaken

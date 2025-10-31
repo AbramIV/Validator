@@ -11,7 +11,7 @@ class Shift():
         self.lastStep = Step(StepType.Nope)
         self.steps.put(self.currentStep)
     
-    def nextStep(self, nextStepType):
+    def step(self, nextStepType):
         self.currentStep.stop = datetime.now()
         self.currentStep.duration = self.currentStep.stop - self.currentStep.start
         self.lastStep = self.currentStep
