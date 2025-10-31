@@ -1,4 +1,5 @@
 INDICATOR = ["background:gray;", "background:green;"]
+INDICATOR_TEXT = ["Vacio", "Lleno"]
 
 TEXT_BOX = ["background:red;color:black;",
             "background:#f5ec4c;color:black;",

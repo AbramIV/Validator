@@ -1,36 +1,55 @@
-import requests
+import asyncio
+import aiohttp
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 class HttpClient():
     def __init__(self):
-        self.response = None
+        self.code = 0
         self.error = False
-        self.errorMsg = ""
+        self.message = ""
         retry_strategy = Retry(
-            total=1,
-            backoff_factor=1,
-            #status_forcelist=[500, 502, 503, 504],
+            total=3,
+            status_forcelist=[500, 502, 503, 504],
         )
         
-        adapter  = HTTPAdapter(max_retries=retry_strategy)
+        adapter = HTTPAdapter(max_retries=retry_strategy)
         self.session = requests.Session()
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
         
     def get(self, url):
-        self.error = False
-        self.errorMsg = ""
+        self.reset()
         try:
-            self.response = self.session.get(url)
-            if self.response is None: raise Exception("No response received")
+            response = self.session.get(url, timeout=0.2)
+            self.code = response.status_code
+            self.message = response.text
         except Exception as ex:
             self.error = True
-            self.errorMsg = str(ex)
+            self.message = str(ex)
+            return False
+        return True
+    
+    def reset(self):
+        self.code = 0
+        self.error = False
+        self.message = ""
+
+    async def get_async(self, url):
+        self.error = False
+        self.message = ""
+        self.code = 0
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    self.code = await response.status
+                    self.message = await response.text()
+        except asyncio.CancelledError:
+            print(f"Request to {url} was cancelled.")
+            return False
+        except aiohttp.ClientError as e:
+            print(f"Error fetching {url}: {e}")
             return False
         return True
         
-
-
-    

@@ -9,10 +9,10 @@ class StepType(Enum):
     Nope = 8
     
 class Input(Enum):
-    TopLeft = 0
-    BottomLeft = 1
-    TopRight = 2
-    BottomRight = 3
+    TopLeft = 2
+    BottomLeft = 3
+    TopRight = 0
+    BottomRight = 1
     Reset = 4
     Reserve_5 = 5
     Reserve_6 = 6
@@ -24,7 +24,7 @@ class Output(Enum):
     Reserve_2 = 2
     Reserve_3 = 3
     Reserve_4 = 4
-    Reserve_5 = 51
+    Reserve_5 = 5
     Reserve_6 = 6
     Reserve_7 = 7
     
@@ -36,5 +36,6 @@ class MistakeType(Enum):
 
 class AppArguments(Enum):
     IP = 0
-    Nope = 1
+    Port = 1
+    Nope = 2
     
