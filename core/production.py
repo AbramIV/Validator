@@ -21,7 +21,7 @@ class Shift():
     def save(self):
         self.currentStep.stop = datetime.now()
         self.currentStep.duration = self.currentStep.stop - self.currentStep.start
-        # serialize and save or send somewhere
+        # serialize and save or send to somewhere
 
 class Step():
     def __init__(self, stepType):

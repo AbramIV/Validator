@@ -24,33 +24,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.worker.work()
 
         self.tipMsg.setText(self.worker.message)
+        self.tipMsg.setStyleSheet(styles.MESSAGE[self.worker.error or self.worker.client.error])
+        if self.worker.error or self.worker.client.error:
+            self.mistakeMsg.hide()
 
-        if not self.worker.error:
-            self.tipMsg.setStyleSheet(styles.TEXT_BOX[styles.BLUE])
+        self.lable_RH1.setStyleSheet(styles.INDICATOR[self.worker.input[Input.RH1.value]])
+        self.lable_RH1.setText("RH 1 " + styles.INDICATOR_TEXT[self.worker.input[Input.RH1.value]])
 
-        self.lable_tl.setStyleSheet(styles.INDICATOR[self.worker.input[Input.TopLeft.value]])
-        self.lable_tl.setText(styles.INDICATOR_TEXT[self.worker.input[Input.TopLeft.value]])
+        self.label_RH2.setStyleSheet(styles.INDICATOR[self.worker.input[Input.RH2.value]])
+        self.label_RH2.setText("RH 2 " + styles.INDICATOR_TEXT[self.worker.input[Input.RH2.value]])
 
-        self.label_bl.setStyleSheet(styles.INDICATOR[self.worker.input[Input.BottomLeft.value]])
-        self.label_bl.setText(styles.INDICATOR_TEXT[self.worker.input[Input.BottomLeft.value]])
+        self.label_LH1.setStyleSheet(styles.INDICATOR[self.worker.input[Input.LH1.value]])
+        self.label_LH1.setText("LH 1 " + styles.INDICATOR_TEXT[self.worker.input[Input.LH1.value]])
 
-        self.label_tr.setStyleSheet(styles.INDICATOR[self.worker.input[Input.TopRight.value]])
-        self.label_tr.setText(styles.INDICATOR_TEXT[self.worker.input[Input.TopRight.value]])
-
-        self.label_br.setStyleSheet(styles.INDICATOR[self.worker.input[Input.BottomRight.value]])
-        self.label_br.setText(styles.INDICATOR_TEXT[self.worker.input[Input.BottomRight.value]])
+        self.label_LH2.setStyleSheet(styles.INDICATOR[self.worker.input[Input.LH2.value]])
+        self.label_LH2.setText("LH 2 " + styles.INDICATOR_TEXT[self.worker.input[Input.LH2.value]])
 
         if self.worker.mistake.value: 
             if self.worker.mistake in (MistakeType.AddedAfterStart, MistakeType.MoreThanOneTaken):
-                self.mistakeMsg.setStyleSheet(styles.TEXT_BOX[styles.RED])
+                self.mistakeMsg.setStyleSheet(styles.BACKGROUND[styles.RED])
             else:
-                self.mistakeMsg.setStyleSheet(styles.TEXT_BOX[styles.YELLOW])   
+                self.mistakeMsg.setStyleSheet(styles.BACKGROUND[styles.YELLOW])   
             self.mistakeMsg.setText(self.worker.mistakeMsg)
             self.mistakeMsg.show()
         else:
             self.mistakeMsg.hide()
-        
-        if self.worker.error or self.worker.client.error:
-            self.mistakeMsg.hide()
-            self.tipMsg.setStyleSheet(styles.TEXT_BOX[styles.RED])
-        

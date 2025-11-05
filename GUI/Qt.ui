@@ -44,28 +44,7 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTextBrowser" name="tipMsg">
-    <property name="geometry">
-     <rect>
-      <x>15</x>
-      <y>260</y>
-      <width>324</width>
-      <height>110</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>14</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background:#84bcf0;color:darkblack;text-align: center;border-radius: 10px;</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="title_positions">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -89,7 +68,7 @@
      <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_tr">
+   <widget class="QLabel" name="label_LH1">
     <property name="geometry">
      <rect>
       <x>180</x>
@@ -104,7 +83,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:gray;color:black;border-radius: 10px;</string>
+     <string notr="true">background:gray;color:black;border-color:black;border-radius: 10px;</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::Box</enum>
@@ -116,7 +95,7 @@
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="title_message">
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -140,7 +119,7 @@
      <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
     </property>
    </widget>
-   <widget class="QLabel" name="lable_tl">
+   <widget class="QLabel" name="lable_RH1">
     <property name="geometry">
      <rect>
       <x>15</x>
@@ -170,7 +149,7 @@
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_br">
+   <widget class="QLabel" name="label_LH2">
     <property name="geometry">
      <rect>
       <x>180</x>
@@ -185,7 +164,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:gray;color:black;border-radius: 10px;</string>
+     <string notr="true">background:gray;color:black;border-color:black;border-radius: 10px;</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::Box</enum>
@@ -197,7 +176,7 @@
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_bl">
+   <widget class="QLabel" name="label_RH2">
     <property name="geometry">
      <rect>
       <x>15</x>
@@ -212,7 +191,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:gray;color:black;border-radius: 10px;</string>
+     <string notr="true">background:gray;color:black;border-color:black;border-radius: 10px;</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::Box</enum>
@@ -224,13 +203,13 @@
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QTextBrowser" name="mistakeMsg">
+   <widget class="QLabel" name="tipMsg">
     <property name="geometry">
      <rect>
-      <x>5</x>
-      <y>230</y>
-      <width>345</width>
-      <height>141</height>
+      <x>15</x>
+      <y>260</y>
+      <width>325</width>
+      <height>121</height>
      </rect>
     </property>
     <property name="font">
@@ -239,20 +218,40 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:gray;color:black</string>
+     <string notr="true">background:#84bcf0;color:darkblack;text-align: center;border-radius: 10px;</string>
     </property>
-    <property name="frameShape">
-     <enum>QFrame::Shape::Box</enum>
+    <property name="text">
+     <string/>
     </property>
-    <property name="frameShadow">
-     <enum>QFrame::Shadow::Plain</enum>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
-    <property name="lineWidth">
-     <number>1</number>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="mistakeMsg">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>229</y>
+      <width>356</width>
+      <height>170</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

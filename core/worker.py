@@ -54,7 +54,7 @@ class Worker():
         
         if self.shift.currentStep.type == StepType.Fill:
             if self.sensors_sum == MAX_POSITIONS_COUNT:
-                self.client.error = False
+                self.client.reset()
                 self.shift.step(StepType.Pick)
                 self.sensors_last_sum = self.sensors_sum
                 self.message = "Elige uno parte!"
@@ -69,17 +69,18 @@ class Worker():
             self.validateCount = 0
             if self.sensors_last_sum != self.sensors_sum:
                 self.mistake = MistakeType.Nope
+                self.client.reset()
                 if  self.sensors_sum > self.sensors_last_sum: 
                     self.mistake = MistakeType.AddedAfterStart
                     self.mistakeMsg = "No devuelva las piezas, finalice el proceso!\nElige uno parte para continuar!"
                 if (self.sensors_last_sum - self.sensors_sum) == 1:   
-                    if self.input[Input.TopLeft.value] != self.last_input[Input.TopLeft.value]:
+                    if self.input[Input.RH1.value] != self.last_input[Input.RH1.value]:
                         self.message = "Esta parte de la izquierda!\n"
                         self.side = "LH"
-                    elif self.input[Input.BottomLeft.value] != self.last_input[Input.BottomLeft.value]:
+                    elif self.input[Input.RH2.value] != self.last_input[Input.RH2.value]:
                         self.message = "Esta parte de la izquierda!\n"
                         self.side = "LH"
-                    elif self.input[Input.TopRight.value] != self.last_input[Input.TopRight.value]:
+                    elif self.input[Input.LH1.value] != self.last_input[Input.LH1.value]:
                         self.message = "Esta parte de la derecha!\n"
                         self.side = "RH"
                     else:
@@ -207,7 +208,7 @@ class Worker():
     def poll(self):
         try:
             self.input = self.device.readInputsAsList()
-            self.sensors_sum = self.input[Input.TopLeft.value] + self.input[Input.BottomLeft.value] + self.input[Input.TopRight.value] + self.input[Input.BottomRight.value]
+            self.sensors_sum = self.input[Input.RH1.value] + self.input[Input.RH2.value] + self.input[Input.LH1.value] + self.input[Input.LH2.value]
             self.output = self.device.readOutputsAsList()
             self.reset = self.input[Input.Reset.value]
             if self.output[Output.Print.value]:

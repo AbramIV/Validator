@@ -9,10 +9,10 @@ class StepType(Enum):
     Nope = 8
     
 class Input(Enum):
-    TopLeft = 2
-    BottomLeft = 3
-    TopRight = 0
-    BottomRight = 1
+    RH1 = 2
+    RH2 = 3
+    LH1 = 0
+    LH2 = 1
     Reset = 4
     Reserve_5 = 5
     Reserve_6 = 6

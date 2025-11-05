@@ -1,8 +1,8 @@
-import ipaddress
 import sys
+import logging
+import ipaddress
 from GUI.MainWindow import MainWindow
 from PyQt6.QtWidgets import QApplication
-import logging
 
 from core.enums import AppArguments
 
