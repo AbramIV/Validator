@@ -39,7 +39,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.label_br.setStyleSheet(styles.INDICATOR[self.worker.input[Input.BottomRight.value]])
         self.label_br.setText(styles.INDICATOR_TEXT[self.worker.input[Input.BottomRight.value]])
-        
+
         if self.worker.mistake.value: 
             if self.worker.mistake in (MistakeType.AddedAfterStart, MistakeType.MoreThanOneTaken):
                 self.mistakeMsg.setStyleSheet(styles.TEXT_BOX[styles.RED])
