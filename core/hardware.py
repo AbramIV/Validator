@@ -1,10 +1,23 @@
 import sys, os
+import win32print
 from Automation.BDaq import *
 from Automation.BDaq.InstantDiCtrl import InstantDiCtrl
 from Automation.BDaq.InstantDoCtrl import InstantDoCtrl
 from Automation.BDaq.BDaqApi import AdxEnumToString, BioFailed
 from pynput.keyboard import Key, Listener
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+
+PRINTER_ERROR_STATES = (
+        win32print.PRINTER_STATUS_NO_TONER,
+        win32print.PRINTER_STATUS_NOT_AVAILABLE,
+        win32print.PRINTER_STATUS_OFFLINE,
+        win32print.PRINTER_STATUS_OUT_OF_MEMORY,
+        win32print.PRINTER_STATUS_OUTPUT_BIN_FULL,
+        win32print.PRINTER_STATUS_PAGE_PUNT,
+        win32print.PRINTER_STATUS_PAPER_JAM,
+        win32print.PRINTER_STATUS_PAPER_OUT,
+        win32print.PRINTER_STATUS_PAPER_PROBLEM,
+    )
 
 class USB5860():
     def __init__(self, deviceDescription, profilePath):
@@ -121,3 +134,29 @@ class Scanner():
     def reset(self):
         self.isScanned = False
         self.buffer.clear()
+
+class Printer:
+    def print_file_windows(file_path, printer_name=None):
+        if printer_name is None:
+            printer_name = win32print.GetDefaultPrinter() # Get default printer
+
+        try:
+            hPrinter = win32print.OpenPrinter(printer_name)
+            # Start a print job
+            hJob = win32print.StartDocPrinter(hPrinter, 1, (file_path, None, "RAW")) 
+            win32print.StartPagePrinter(hPrinter)
+            
+            with open(file_path, "rb") as f:
+                data = f.read()
+                win32print.WritePrinter(hPrinter, data)
+            
+            win32print.EndPagePrinter(hPrinter)
+            win32print.EndDocPrinter(hPrinter)
+            win32print.ClosePrinter(hPrinter)
+            print(f"Successfully sent {file_path} to printer {printer_name}")
+        except Exception as e:
+            print(f"Error printing: {e}")
+
+# Example usage:
+# print_file_windows("my_document.txt") 
+# print_file_windows("my_document.pdf", "My Specific Printer")

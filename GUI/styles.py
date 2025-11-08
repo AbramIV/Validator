@@ -6,11 +6,11 @@ INDICATOR_TEXT = ["Vacio", "Lleno"]
 MESSAGE = ["background:#84bcf0;color:darkblack;text-align: center;border-radius: 15px;",
            "background:red;color:darkblack;text-align: center;border-radius: 15px;"]
 
-BACKGROUND = ["background:red;color:black;",
-            "background:#f5ec4c;color:black;",
-            "background:green;color:black;",
-            "background:gray;color:black;",
-            "background:#84bcf0;color:black;"]
+BACKGROUND = ["background:red;",
+              "background:#f5ec4c;",
+              "background:green;",
+              "background:gray;",
+              "background:#84bcf0;"]
 
 RED = 0
 YELLOW = 1

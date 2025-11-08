@@ -5,6 +5,7 @@ from core.hardware import USB5860, Scanner
 from core.http import HttpClient
 from core.production import Shift
 import threading
+import json
 
 MAX_POSITIONS_COUNT = 4
 
@@ -138,7 +139,8 @@ class Worker():
             if self.validateCount < 1:
                 if self.client.get(self.url):
                     if self.is_valid():
-                        if self.client.code == requests.codes.ok:
+                        python_object = json.loads(self.client.response.json())
+                        if python_object['SUCCESS']:
                             self.device.setOutput(Output.Print.value)
                             self.message = "Escanear el codigo impreso!"
                             self.shift.step(StepType.Scan)
@@ -236,3 +238,19 @@ class Worker():
         self.scanner.reset()
         self.client.reset()
         self.shift = Shift(StepType.Fill)
+
+"""{
+  "SUCCESS": true,
+  "IP": "255.255.255.255",
+  "PORT":1925,
+  "ZPL":ZPL_CODE,
+  "PCB1":"SERIALPCB1",
+  "HEATSINK1":"HEATSINK1",
+  "PCB2":"SERIALPCB2",
+  "HEATSINK2":"HEATSINK2"
+}
+ 
+{
+  "SUCCESS": false,
+  "MESSAGE": "Error message"
+}"""
