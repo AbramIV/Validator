@@ -22,7 +22,7 @@ class HttpClient():
     def get(self, url):
         self.reset()
         try:
-            response = self.session.get(url, timeout=0.2)
+            response = self.session.get(url, timeout=1)
             self.code = response.status_code
             self.message = response.text
         except Exception as ex:
@@ -52,4 +52,4 @@ class HttpClient():
             print(f"Error fetching {url}: {e}")
             return False
         return True
-        
+      

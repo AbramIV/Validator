@@ -1,7 +1,7 @@
 import logging
 import requests
-from core.enums import Input, MistakeType, Output, StepType
-from core.hardware import USB5860, Scanner
+from core.enums import AppArguments, Input, MistakeType, Output, StepType
+from core.hardware import USB5860, Printer, Scanner
 from core.http import HttpClient
 from core.production import Shift
 import threading
@@ -13,10 +13,14 @@ DEVICE_DESCRIPTION = "USB-5860,BID#0"
 PROFILE_PATH = u"../../profile/USB-5860.xml"
 
 class Worker():
-    def __init__(self, ip):
+    def __init__(self, arguments):
         self.logger = logging.getLogger("__main__")
         
+        self.ip1 = arguments[AppArguments.IP1.value] + ":" + arguments[AppArguments.Port1.value]
+        self.ip2 = arguments[AppArguments.IP2.value] + ":" + arguments[AppArguments.Port2.value]
+
         self.scanner = Scanner()
+        self.printer = Printer("", 1111)
         self.client = HttpClient()
         self.shift = Shift(StepType.Fill)
         
@@ -30,7 +34,6 @@ class Worker():
         self.mistakeMsg = ""
         self.scanCount = 0
         self.validateCount = 0
-        self.IP = ip
         self.qr1 = ""
         self.qr2 = ""
         self.qr3 = ""
@@ -115,7 +118,7 @@ class Worker():
                         self.mistake = MistakeType.CodeScannedTwice
                         self.mistakeMsg = "Escaneaste lo mismo! Escanea el segundo codigo QR!" 
                     else:
-                        self.url = f"http://{self.IP}/Route/to/Define?productSerial1={self.qr1}&productSerial2={self.qr2}&side={self.side}"
+                        self.url = f"http://{self.ip1}/Route/to/Define?productSerial1={self.qr1}&productSerial2={self.qr2}&side={self.side}"
                         self.mistake = MistakeType.Nope
                         self.shift.step(StepType.Validate)
                         self.message = "Validacion, espera..."
@@ -126,9 +129,9 @@ class Worker():
                         self.mistake = MistakeType.CodeScannedTwice
                         self.mistakeMsg = "Escaneó el código de la pieza. ¡Escanee el código impreso!"
                     else:
-                        self.url = f"http://{self.IP}/Route/to/Define?productSerial={self.qr3}&side={self.side}"
-                        self.mistake = MistakeType.Nope
                         self.scanCount = 0
+                        self.url = f"http://{self.ip2}/Route/to/Define?productSerial={self.qr3}"
+                        self.mistake = MistakeType.Nope
                         self.shift.step(StepType.Validate)
                         self.message = "Validacion, espera..."
                 self.scanner.reset()
@@ -138,24 +141,29 @@ class Worker():
         if self.shift.currentStep.type == StepType.Validate:
             if self.validateCount < 1:
                 if self.client.get(self.url):
-                    if self.is_valid():
+                    if self.is_position_valid():
                         python_object = json.loads(self.client.response.json())
                         if python_object['SUCCESS']:
-                            self.device.setOutput(Output.Print.value)
+                            self.device.setOutput(Output.Reserve_0.value)
+
+                            # print code
+                            self.printer.print(python_object['ZPL'])
+
+
                             self.message = "Escanear el codigo impreso!"
                             self.shift.step(StepType.Scan)
                             self.validateCount += 1      
                         else:
-                            self.logger.warning(self.client.message)
+                            self.logger.warning(python_object['MESSAGE'])
                             if self.sensors_sum == 0:
-                                self.message = "No valido! Instalar todos partes."
+                                self.message = python_object['MESSAGE'] + "\nInstalar todos partes."
                                 self.shift.save()
                                 self.shift = Shift(StepType.Fill)
                             else:
                                 self.shift = Shift(StepType.Pick)
-                                self.message = "No valido! Elige uno parte."            
+                                self.message = python_object['MESSAGE'] + "\nElige uno parte."            
                 else:
-                    if self.is_valid():
+                    if self.is_position_valid():
                         self.logger.error(self.client.message)                    
                         if self.sensors_sum == 0:
                             self.shift.save()
@@ -166,7 +174,7 @@ class Worker():
                             self.shift = Shift(StepType.Pick)
             else:
                 if self.client.get(self.url):   
-                    if self.is_valid():    
+                    if self.is_position_valid():    
                         if self.client.code == requests.codes.ok:
                             if self.sensors_sum == 0: 
                                 self.shift = Shift(StepType.Fill)
@@ -183,7 +191,7 @@ class Worker():
                                 self.shift = Shift(StepType.Pick)
                                 self.message = "No valido! Elige uno parte." 
                 else: 
-                    if self.is_valid():
+                    if self.is_position_valid():
                         self.logger.error(self.client.message)                    
                         if self.sensors_sum == 0:
                             self.shift.save()
@@ -195,7 +203,7 @@ class Worker():
         
         self.last_input = self.input
 
-    def is_valid(self):
+    def is_position_valid(self):
         if self.sensors_last_sum != self.sensors_sum:
             if self.sensors_last_sum > self.sensors_sum:
                 self.mistake = MistakeType.MoreThanOneTaken
@@ -212,9 +220,9 @@ class Worker():
             self.input = self.device.readInputsAsList()
             self.sensors_sum = self.input[Input.RH1.value] + self.input[Input.RH2.value] + self.input[Input.LH1.value] + self.input[Input.LH2.value]
             self.output = self.device.readOutputsAsList()
-            self.reset = self.input[Input.Reset.value]
-            if self.output[Output.Print.value]:
-                self.device.resetOutput(Output.Print.value)
+            self.reset = self.input[Input.Button.value]
+            if self.output[Output.Reserve_0.value]:
+                self.device.resetOutput(Output.Reserve_0.value)
             self.error = False
         except Exception as ex:
             self.clear()

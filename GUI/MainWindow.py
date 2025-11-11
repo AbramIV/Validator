@@ -6,12 +6,12 @@ from core.worker import Worker
 from GUI import styles
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    def __init__(self, ip, *args, obj=None, **kwargs):
+    def __init__(self, arguments, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
         self.mistakeMsg.hide()
         
-        self.worker = Worker(ip)
+        self.worker = Worker(arguments)
         
         self.timer = QTimer()
         self.timer.setInterval(200)

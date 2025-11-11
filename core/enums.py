@@ -13,13 +13,13 @@ class Input(Enum):
     RH2 = 3
     LH1 = 0
     LH2 = 1
-    Reset = 4
+    Button = 4
     Reserve_5 = 5
     Reserve_6 = 6
     Reserve_7 = 7
     
 class Output(Enum):
-    Print = 0
+    Reserve_0 = 0
     Reserve_1 = 1
     Reserve_2 = 2
     Reserve_3 = 3
@@ -35,7 +35,29 @@ class MistakeType(Enum):
     CodeScannedTwice = 3
 
 class AppArguments(Enum):
-    IP = 0
-    Port = 1
-    Nope = 2
+    IP1 = 0
+    Port1 = 1
+    IP2 = 2
+    Port2 = 3
+    Nope = 4
     
+class PrinterStatus(Enum):
+    Normal = 0x00
+    HeadOpened = 0x01
+    PaperJam = 0x02
+    PaperJamAndHeadOpened = 0x03
+    OutOfPaper = 0x04
+    OutOfPaperAndHeadOpened = 0x05
+    OutOfRibbon = 0x08
+    OutOfRibbonAndHeadOpened = 0x09
+    OutOfRibbonAndPaperJam = 0x0A
+    OutOfRibbonPaperJamAndHeadOpened = 0x0B 
+    OutOfRibbonAndOutOfPaper = 0x0C
+    OutOfRibbonOutOfPaperAndHeadOpened = 0x0D
+    Pause = 0x10
+    Printing = 0x20
+    OtherError = 0x80
+
+class PrinterCommand(Enum):
+    Reset = "<ESC>!C"
+    Status = "<ESC>!?"
