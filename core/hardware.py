@@ -134,16 +134,18 @@ class Printer():
 
     def print(self, zpl):
         try:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.timeout = 1
-                s.connect((self.ip, self.port))
-                s.sendall(zpl.encode('utf-8'))
-        except socket.error as e:
-            print(f"Error with socket connection: {e}")
-        except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            self.socket.timeout = 1
+            self.socket.connect((self.ip, self.port))
+            self.socket.sendall(zpl.encode('utf-8'))
+        except socket.error as ex:
+            print(f"Error with socket connection: {ex}")
+        except Exception as ex:
+            print(f"An unexpected error occurred: {ex}")
+        finally:
+            self.socket.close()
 
     def get_status(self):
+        status = PrinterStatus.Nope
         try:
             self.socket.connect((self.ip, self.port))
             self.socket.sendall(PrinterCommand.Status.encode('utf-8'))
@@ -151,9 +153,10 @@ class Printer():
             status = PrinterStatus(hex(int(response)))
             print(f"Received response: {status}")
         except:
-            print("get status of printer error")
+            status = PrinterStatus.RequestError
         finally:
             self.socket.close()
+        return status
 
     def reset(self):
         try:

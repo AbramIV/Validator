@@ -10,11 +10,11 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow: QtWidgets.QMainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.WindowModality.NonModal)
         MainWindow.setEnabled(True)
-        MainWindow.resize(356, 407)
+        MainWindow.setFixedSize(356, 407)
         font = QtGui.QFont()
         font.setBold(False)
         MainWindow.setFont(font)

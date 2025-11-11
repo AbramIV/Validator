@@ -4,8 +4,8 @@ class StepType(Enum):
     Fill = 0
     Pick = 1
     Scan = 2
-    Validate = 4
-    Restore = 7
+    Print = 3
+    Valid = 4
     Nope = 8
     
 class Input(Enum):
@@ -57,6 +57,8 @@ class PrinterStatus(Enum):
     Pause = 0x10
     Printing = 0x20
     OtherError = 0x80
+    RequestError = 0x110
+    Nope = 0x110
 
 class PrinterCommand(Enum):
     Reset = "<ESC>!C"

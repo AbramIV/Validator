@@ -1,6 +1,6 @@
 import logging
 import requests
-from core.enums import AppArguments, Input, MistakeType, Output, StepType
+from core.enums import AppArguments, Input, MistakeType, Output, PrinterStatus, StepType
 from core.hardware import USB5860, Printer, Scanner
 from core.http import HttpClient
 from core.production import Shift
@@ -21,7 +21,7 @@ class Worker():
 
         self.scanner = Scanner()
         self.printer = Printer("", 1111)
-        self.client = HttpClient()
+        self.client = HttpClient(1)
         self.shift = Shift(StepType.Fill)
         
         self.input = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -39,19 +39,19 @@ class Worker():
         self.qr3 = ""
         self.side = ""
         self.url = ""
+        self.zpl = ""
         self.mistake = MistakeType.Nope
         self.error = False
 
         try:
             self.device = USB5860(DEVICE_DESCRIPTION, PROFILE_PATH)
         except Exception as ex:
+            self.error = False
             self.logger.error("Advantech USB-5860 init error: " + str(ex))
             self.message = "Advantech USB-5860 init error!"
         
         self.scanner_thread = threading.Thread(target=self.scanner.scan, daemon=True)
         self.scanner_thread.start()
-
-        self.client_thread = threading.Thread(target=self.client.get, daemon=True)
 
     def work(self):
         if not self.poll(): return
@@ -98,15 +98,12 @@ class Worker():
                     self.shift = Shift(StepType.Fill)
                     
         if self.shift.currentStep.type == StepType.Scan:
-            if self.sensors_last_sum != self.sensors_sum:
-                if self.sensors_last_sum > self.sensors_sum:
-                    self.mistake = MistakeType.MoreThanOneTaken
-                    self.mistakeMsg = "No extraiga la pieza hasta que haya terminado el último proceso!\nInstalar todos partes para continuar!"
-                else:
-                    self.mistake = MistakeType.AddedAfterStart
-                    self.mistakeMsg = "No devuelva las piezas, finalice el proceso!\nElige uno parte para continuar!"
-                self.clear()
+            if not self.is_position_valid(): return
             
+            if self.input[Input.Button.value]:
+                self.shift.step(StepType.Print)
+                return
+
             if self.scanner.isScanned:
                 if self.scanCount == 0:
                     self.qr1 = "".join(self.scanner.buffer)
@@ -120,7 +117,7 @@ class Worker():
                     else:
                         self.url = f"http://{self.ip1}/Route/to/Define?productSerial1={self.qr1}&productSerial2={self.qr2}&side={self.side}"
                         self.mistake = MistakeType.Nope
-                        self.shift.step(StepType.Validate)
+                        self.shift.step(StepType.Valid)
                         self.message = "Validacion, espera..."
                         self.scanCount += 1
                 else:
@@ -138,20 +135,16 @@ class Worker():
                 self.last_input = self.input
                 return
                        
-        if self.shift.currentStep.type == StepType.Validate:
+        if self.shift.currentStep.type == StepType.Valid:
             if self.validateCount < 1:
                 if self.client.get(self.url):
                     if self.is_position_valid():
                         python_object = json.loads(self.client.response.json())
                         if python_object['SUCCESS']:
-                            self.device.setOutput(Output.Reserve_0.value)
-
-                            # print code
-                            self.printer.print(python_object['ZPL'])
-
-
-                            self.message = "Escanear el codigo impreso!"
-                            self.shift.step(StepType.Scan)
+                            self.zpl = python_object['ZPL']
+                            self.message = "Impresion..."
+                            self.shift.step(StepType.Print)
+                            self.reprint = True
                             self.validateCount += 1      
                         else:
                             self.logger.warning(python_object['MESSAGE'])
@@ -200,7 +193,17 @@ class Worker():
                         else:
                             self.message = "HTTP pedido error!\nContactar con soporte O\nelige uno parte para continuar!"
                             self.shift = Shift(StepType.Pick)
-        
+            
+        if self.shift.currentStep.type == StepType.Print:
+            status = self.printer.get_status()
+            if status == PrinterStatus.Printing:
+                if not self.is_position_valid():
+                    self.clear()
+            else:
+                self.printer.print(self.zpl)
+                self.message = "Escanear el codigo impreso!\nSi la pegatina está dañada, pulse el botón para volver a imprimirla."
+                Shift.step(StepType.Scan)
+                
         self.last_input = self.input
 
     def is_position_valid(self):
@@ -223,12 +226,15 @@ class Worker():
             self.reset = self.input[Input.Button.value]
             if self.output[Output.Reserve_0.value]:
                 self.device.resetOutput(Output.Reserve_0.value)
-            self.error = False
+            if self.error:
+                self.error = False
+                self.logger.error("Advantech USB-5860 conexion ha sido restaurada.")
         except Exception as ex:
             self.clear()
-            self.error = True
-            self.message = "Advantech USB-5860 encuesta error!"
-            self.logger.error("Advantech USB-5860 request error: " + str(ex))
+            if not self.error:
+                self.error = True
+                self.message = "Advantech USB-5860 encuesta error!"
+                self.logger.error("Advantech USB-5860 request error: " + str(ex))
             if self.device.isDisposed:
                 self.device = USB5860("USB-5860,BID#0", u"../../profile/USB-5860.xml")
             return False

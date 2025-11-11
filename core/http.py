@@ -5,10 +5,11 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 class HttpClient():
-    def __init__(self):
+    def __init__(self, timeout=0.1):
         self.code = 0
         self.error = False
         self.message = ""
+        self.timeout = timeout
         retry_strategy = Retry(
             total=3,
             status_forcelist=[500, 502, 503, 504],
@@ -22,7 +23,7 @@ class HttpClient():
     def get(self, url):
         self.reset()
         try:
-            response = self.session.get(url, timeout=1)
+            response = self.session.get(url, timeout=self.timeout)
             self.code = response.status_code
             self.message = response.text
         except Exception as ex:
@@ -35,21 +36,4 @@ class HttpClient():
         self.code = 0
         self.error = False
         self.message = ""
-
-    async def get_async(self, url):
-        self.error = False
-        self.message = ""
-        self.code = 0
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as response:
-                    self.code = await response.status
-                    self.message = await response.text()
-        except asyncio.CancelledError:
-            print(f"Request to {url} was cancelled.")
-            return False
-        except aiohttp.ClientError as e:
-            print(f"Error fetching {url}: {e}")
-            return False
-        return True
       
