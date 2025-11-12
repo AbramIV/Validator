@@ -7,7 +7,7 @@ MESSAGE = ["background:#84bcf0;color:darkblack;text-align: center;border-radius:
            "background:red;color:darkblack;text-align: center;border-radius: 15px;"]
 
 BACKGROUND = ["background:red;",
-              "background:#f5ec4c;",
+              "background:#f5ec4c;color:black",
               "background:green;",
               "background:gray;",
               "background:#84bcf0;"]

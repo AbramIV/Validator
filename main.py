@@ -6,13 +6,10 @@ from PyQt6.QtWidgets import QApplication
 from core.enums import AppArguments
 import configparser
 
-from core.hardware import Printer
-
 logging.basicConfig(filename='logs.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("Logger")
 config = configparser.ConfigParser()
 code = 0
-printer = Printer("130.14.0.66", 9100)
 
 if __name__ == '__main__':
     logger.info("Application started.")
@@ -21,31 +18,28 @@ if __name__ == '__main__':
     config.read('config.ini')
 
     try:
-        arguments[AppArguments.IP1.value] = config['VALID1']["IP"]
-        arguments[AppArguments.Port1.value] = config['VALID1']["port"]
-        arguments[AppArguments.IP2.value] = config['VALID2']["IP"]
-        arguments[AppArguments.Port2.value] = config['VALID2']["port"]
-        arguments[AppArguments.IP2.value] = config['PRINTER']["IP"]
-        arguments[AppArguments.Port2.value] = config['PRINTER']["port"]
+        arguments[AppArguments.IP_VALIDATE.value] = config['API']["IP"]
+        arguments[AppArguments.IP_PRINTER.value] = config['PRINTER']["IP"]
+        arguments[AppArguments.PORT_PRINTER.value] = config['PRINTER']["port"]
     except Exception as ex:
         logger.error(f"read config.ini error: {ex}")
         code += 1
 
     if code == 0:
         try:
-            ipaddress.ip_address(arguments[AppArguments.IP1.value])
-            ipaddress.ip_address(arguments[AppArguments.IP2.value])
+            ipaddress.ip_address(arguments[AppArguments.IP_VALIDATE.value])
+            ipaddress.ip_address(arguments[AppArguments.IP_PRINTER.value])
         except ValueError:
-            logger.error("Invalid IP addresses provided: \n" + arguments[AppArguments.IP1.value] + "\n" + arguments[AppArguments.IP2.value])
+            logger.error("Invalid IP addresses provided: \n" + arguments[AppArguments.IP_VALIDATE.value] + "\n" + arguments[AppArguments.IP_PRINTER.value])
             code += 1
 
     if code == 0:
-        if arguments[AppArguments.Port1.value].isdigit() and arguments[AppArguments.Port2.value].isdigit():
-            if int(arguments[AppArguments.Port1.value]) < 1 or int(arguments[AppArguments.Port2.value]) > 65535:
-                logger.error("Port number out of valid range (1-65535): \n" + arguments[AppArguments.Port1.value] + "\n" + arguments[AppArguments.Port2.value] )
+        if arguments[AppArguments.PORT_PRINTER.value].isdigit():
+            if int(arguments[AppArguments.PORT_PRINTER.value]) < 1 or int(arguments[AppArguments.PORT_PRINTER.value]) > 65535:
+                logger.error("Port number out of valid range (1-65535): \n" + arguments[AppArguments.PORT_PRINTER.value])
                 code += 1
         else:
-            logger.error("Ports are not a valid integer: \n" + arguments[AppArguments.Port1.value] + "\n" + arguments[AppArguments.Port2.value])
+            logger.error("Ports are not a valid integer: \n" + arguments[AppArguments.PORT_PRINTER.value])
             code += 1  
 
     if code > 0:

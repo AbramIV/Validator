@@ -16,11 +16,10 @@ class Worker():
     def __init__(self, arguments):
         self.logger = logging.getLogger("__main__")
         
-        self.ip1 = arguments[AppArguments.IP1.value] + ":" + arguments[AppArguments.Port1.value]
-        self.ip2 = arguments[AppArguments.IP2.value] + ":" + arguments[AppArguments.Port2.value]
+        self.ip_api = arguments[AppArguments.IP_VALIDATE.value]
 
         self.scanner = Scanner()
-        self.printer = Printer("", 1111)
+        self.printer = Printer(arguments[AppArguments.IP_PRINTER.value], arguments[AppArguments.PORT_PRINTER.value])
         self.client = HttpClient(1)
         self.shift = Shift(StepType.Fill)
         
@@ -113,9 +112,9 @@ class Worker():
                     self.qr2 = "".join(self.scanner.buffer)
                     if self.qr1 == self.qr2:
                         self.mistake = MistakeType.CodeScannedTwice
-                        self.mistakeMsg = "Escaneaste lo mismo! Escanea el segundo codigo QR!" 
+                        self.mistakeMsg = "Escaneaste lo mismo!\nEscanea el segundo codigo QR!" 
                     else:
-                        self.url = f"http://{self.ip1}/Route/to/Define?productSerial1={self.qr1}&productSerial2={self.qr2}&side={self.side}"
+                        self.url = f"http://{self.ip_api}/apiDB/api/zkw/serials?pcb1={self.qr1}&pcb2={self.qr2}&side={self.side}"
                         self.mistake = MistakeType.Nope
                         self.shift.step(StepType.Valid)
                         self.message = "Validacion, espera..."
@@ -127,9 +126,9 @@ class Worker():
                         self.mistakeMsg = "Escaneó el código de la pieza. ¡Escanee el código impreso!"
                     else:
                         self.scanCount = 0
-                        self.url = f"http://{self.ip2}/Route/to/Define?productSerial={self.qr3}"
+                        self.url = f"http://{self.ip_api}/apiDB/api/zkw/linked?pcb1={self.qr1}&pcb2={self.qr2}&heatsink={self.qr3}"
                         self.mistake = MistakeType.Nope
-                        self.shift.step(StepType.Validate)
+                        self.shift.step(StepType.Valid)
                         self.message = "Validacion, espera..."
                 self.scanner.reset()
                 self.last_input = self.input
@@ -139,7 +138,7 @@ class Worker():
             if self.validateCount < 1:
                 if self.client.get(self.url):
                     if self.is_position_valid():
-                        python_object = json.loads(self.client.response.json())
+                        python_object = json.loads(self.client.message)
                         if python_object['SUCCESS']:
                             self.zpl = python_object['ZPL']
                             self.message = "Impresion..."
@@ -168,7 +167,8 @@ class Worker():
             else:
                 if self.client.get(self.url):   
                     if self.is_position_valid():    
-                        if self.client.code == requests.codes.ok:
+                        python_object = json.loads(self.client.message)
+                        if python_object['SUCCESS']:
                             if self.sensors_sum == 0: 
                                 self.shift = Shift(StepType.Fill)
                                 self.message = "Instalar todos partes."
@@ -177,12 +177,12 @@ class Worker():
                                 self.message = "Elige uno parte!"
                         else:
                             if self.sensors_sum == 0:
-                                self.message = "No valido! Instalar todos partes."
+                                self.message = python_object['MESSAGE'] + "\nInstalar todos partes."
                                 self.shift.save()
                                 self.shift = Shift(StepType.Fill)
                             else:
                                 self.shift = Shift(StepType.Pick)
-                                self.message = "No valido! Elige uno parte." 
+                                self.message = python_object['MESSAGE'] + "\nNo valido! Elige uno parte." 
                 else: 
                     if self.is_position_valid():
                         self.logger.error(self.client.message)                    
@@ -267,19 +267,3 @@ class Worker():
         self.scanner.reset()
         self.client.reset()
         self.shift = Shift(StepType.Fill)
-
-"""{
-  "SUCCESS": true,
-  "IP": "255.255.255.255",
-  "PORT":1925,
-  "ZPL":ZPL_CODE,
-  "PCB1":"SERIALPCB1",
-  "HEATSINK1":"HEATSINK1",
-  "PCB2":"SERIALPCB2",
-  "HEATSINK2":"HEATSINK2"
-}
- 
-{
-  "SUCCESS": false,
-  "MESSAGE": "Error message"
-}"""

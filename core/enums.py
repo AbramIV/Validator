@@ -35,10 +35,9 @@ class MistakeType(Enum):
     CodeScannedTwice = 3
 
 class AppArguments(Enum):
-    IP1 = 0
-    Port1 = 1
-    IP2 = 2
-    Port2 = 3
+    IP_VALIDATE = 0
+    IP_PRINTER = 1
+    PORT_PRINTER = 2
     Nope = 4
     
 class PrinterStatus(Enum):

@@ -6,7 +6,6 @@ from urllib3.util.retry import Retry
 
 class HttpClient():
     def __init__(self, timeout=0.1):
-        self.code = 0
         self.error = False
         self.message = ""
         self.timeout = timeout
@@ -24,8 +23,8 @@ class HttpClient():
         self.reset()
         try:
             response = self.session.get(url, timeout=self.timeout)
-            self.code = response.status_code
-            self.message = response.text
+            response.raise_for_status()
+            self.message = response.json()
         except Exception as ex:
             self.error = True
             self.message = str(ex)
