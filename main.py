@@ -6,10 +6,13 @@ from PyQt6.QtWidgets import QApplication
 from core.enums import AppArguments
 import configparser
 
+from core.hardware import Printer
+
 logging.basicConfig(filename='logs.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("Logger")
 config = configparser.ConfigParser()
 code = 0
+printer = Printer("130.14.0.66", 9100)
 
 if __name__ == '__main__':
     logger.info("Application started.")
@@ -18,10 +21,12 @@ if __name__ == '__main__':
     config.read('config.ini')
 
     try:
-        arguments[AppArguments.IP1.value] = config['HOST1']["IP"]
-        arguments[AppArguments.Port1.value] = config['HOST1']["port"]
-        arguments[AppArguments.IP2.value] = config['HOST2']["IP"]
-        arguments[AppArguments.Port2.value] = config['HOST2']["port"]
+        arguments[AppArguments.IP1.value] = config['VALID1']["IP"]
+        arguments[AppArguments.Port1.value] = config['VALID1']["port"]
+        arguments[AppArguments.IP2.value] = config['VALID2']["IP"]
+        arguments[AppArguments.Port2.value] = config['VALID2']["port"]
+        arguments[AppArguments.IP2.value] = config['PRINTER']["IP"]
+        arguments[AppArguments.Port2.value] = config['PRINTER']["port"]
     except Exception as ex:
         logger.error(f"read config.ini error: {ex}")
         code += 1

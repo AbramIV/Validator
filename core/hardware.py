@@ -1,5 +1,6 @@
 import socket
 import sys, os
+import time
 from Automation.BDaq import *
 from Automation.BDaq.InstantDiCtrl import InstantDiCtrl
 from Automation.BDaq.InstantDoCtrl import InstantDoCtrl
@@ -129,40 +130,44 @@ class Printer():
     def __init__(self, ip, port):
         self.ip = ip
         self.port = port
+        self.message = ""
         self.status = PrinterStatus.Normal
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    def print(self, zpl):
+    def print(self, zpl: str):
+        success = False
         try:
-            self.socket.timeout = 1
-            self.socket.connect((self.ip, self.port))
-            self.socket.sendall(zpl.encode('utf-8'))
+            self.my_socket.connect((self.ip, self.port))
+            self.my_socket.send(zpl.encode('utf-8'))
+            success = True
         except socket.error as ex:
-            print(f"Error with socket connection: {ex}")
+            self.message = f"Error with socket connection: {ex}"
         except Exception as ex:
-            print(f"An unexpected error occurred: {ex}")
+            self.message = f"An unexpected error occurred: {ex}"
         finally:
-            self.socket.close()
+            self.my_socket.close()
+        return success
 
     def get_status(self):
         status = PrinterStatus.Nope
         try:
-            self.socket.connect((self.ip, self.port))
-            self.socket.sendall(PrinterCommand.Status.encode('utf-8'))
-            response = self.socket.recv(4096).decode('utf-8')
-            status = PrinterStatus(hex(int(response)))
-            print(f"Received response: {status}")
-        except:
+            self.my_socket.connect((self.ip, self.port))
+            self.my_socket.send("\x1B!?".encode('utf-8'))
+            response = self.my_socket.recv(1) #recv(1024).decode('utf-8')
+            #status = PrinterStatus(hex(int(response)))
+            print(f"Received response: {response}")
+        except Exception as ex:
+            print(str(ex))
             status = PrinterStatus.RequestError
         finally:
-            self.socket.close()
+            self.my_socket.close()
         return status
 
     def reset(self):
         try:
-            self.socket.connect((self.ip, self.port))
-            self.socket.sendall(PrinterCommand.Reset.encode('utf-8'))
+            self.my_socket.connect((self.ip, self.port))
+            self.my_socket.sendall(PrinterCommand.Reset.encode('utf-8'))
         except:
             print("reset printer error")
         finally:
-            self.socket.close()
+            self.my_socket.close()

@@ -58,8 +58,8 @@ class PrinterStatus(Enum):
     Printing = 0x20
     OtherError = 0x80
     RequestError = 0x110
-    Nope = 0x110
+    Nope = 0x120
 
 class PrinterCommand(Enum):
-    Reset = "<ESC>!C"
-    Status = "<ESC>!?"
+    Reset = "\x1B!C"
+    Status = "\x1B!?"

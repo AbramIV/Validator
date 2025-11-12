@@ -193,7 +193,21 @@ class Worker():
                         else:
                             self.message = "HTTP pedido error!\nContactar con soporte O\nelige uno parte para continuar!"
                             self.shift = Shift(StepType.Pick)
-            
+
+        if self.shift.currentStep.type == StepType.Print:
+            if (self.printer.print(self.zpl)):
+                self.message = "Escanear el codigo impreso!\nSi la pegatina está dañada, pulse el botón para volver a imprimirla."
+                Shift.step(StepType.Scan)
+            else:
+                self.logger.error(self.printer.message)
+                if self.sensors_sum == 0: 
+                    self.shift = Shift(StepType.Fill)
+                    self.message = self.printer.message + " Instalar todos partes."
+                else: 
+                    self.shift = Shift(StepType.Pick)
+                    self.message = self.printer.message + " Elige uno parte!"
+        
+        """   
         if self.shift.currentStep.type == StepType.Print:
             status = self.printer.get_status()
             if status == PrinterStatus.Printing:
@@ -203,6 +217,7 @@ class Worker():
                 self.printer.print(self.zpl)
                 self.message = "Escanear el codigo impreso!\nSi la pegatina está dañada, pulse el botón para volver a imprimirla."
                 Shift.step(StepType.Scan)
+        """
                 
         self.last_input = self.input
 
