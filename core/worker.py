@@ -239,8 +239,7 @@ class Worker():
             self.sensors_sum = self.input[Input.RH1.value] + self.input[Input.RH2.value] + self.input[Input.LH1.value] + self.input[Input.LH2.value]
             self.output = self.device.readOutputsAsList()
             self.reset = self.input[Input.Button.value]
-            if self.output[Output.Reserve_0.value]:
-                self.device.resetOutput(Output.Reserve_0.value)
+
             if self.error:
                 self.error = False
                 self.logger.error("Advantech USB-5860 conexion ha sido restaurada.")
