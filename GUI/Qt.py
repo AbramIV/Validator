@@ -96,7 +96,7 @@ class Ui_MainWindow(object):
         self.tipMsg.setWordWrap(True)
         self.tipMsg.setObjectName("tipMsg")
         self.mistakeMsg = QtWidgets.QLabel(parent=self.centralwidget)
-        self.mistakeMsg.setGeometry(QtCore.QRect(0, 229, 356, 170))
+        self.mistakeMsg.setGeometry(QtCore.QRect(15, 230, 325, 160))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.mistakeMsg.setFont(font)

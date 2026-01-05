@@ -43,6 +43,15 @@ if __name__ == '__main__':
             logger.error("Ports are not a valid integer: \n" + arguments[AppArguments.PORT_PRINTER.value])
             code += 1  
 
+    if code == 0:
+        if arguments[AppArguments.RESET_INTERVAL.value].isdigit():
+            if int(arguments[AppArguments.RESET_INTERVAL.value]) < 5 or int(arguments[AppArguments.RESET_INTERVAL.value]) > 50:
+                logger.error("Reset interval out of valid range (5-50): \n" + arguments[AppArguments.RESET_INTERVAL.value])
+                code += 1
+        else:
+            logger.error("Reset interval is not a valid integer: \n" + arguments[AppArguments.RESET_INTERVAL.value])
+            code += 1
+
     if code > 0:
         sys.exit(code)
 

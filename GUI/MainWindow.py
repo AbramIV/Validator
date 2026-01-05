@@ -41,7 +41,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.mistakeMsg.setStyleSheet(styles.POPUP_MESSAGE[styles.RED])
             else:
                 self.mistakeMsg.setStyleSheet(styles.POPUP_MESSAGE[styles.YELLOW])
-            self.mistakeMsg.setText(self.worker.mistakeMsg)
+            self.mistakeMsg.setText("ACCION INCORRECTA!\n" + self.worker.mistakeMsg)
             self.mistakeMsg.show()
         else:
             self.mistakeMsg.hide()
