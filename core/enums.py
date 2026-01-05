@@ -38,6 +38,7 @@ class AppArguments(Enum):
     IP_VALIDATE = 0
     IP_PRINTER = 1
     PORT_PRINTER = 2
+    RESET_INTERVAL = 3
     Nope = 4
     
 class PrinterStatus(Enum):

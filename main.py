@@ -19,8 +19,9 @@ if __name__ == '__main__':
 
     try:
         arguments[AppArguments.IP_VALIDATE.value] = config['API']["IP"]
-        arguments[AppArguments.IP_PRINTER.value] = config['PRINTER']["IP"]
-        arguments[AppArguments.PORT_PRINTER.value] = config['PRINTER']["port"]
+        arguments[AppArguments.IP_PRINTER.value] = config['Printer']["IP"]
+        arguments[AppArguments.PORT_PRINTER.value] = config['Printer']["port"]
+        arguments[AppArguments.RESET_INTERVAL.value] = config['System']["reset_interval"]
     except Exception as ex:
         logger.error(f"read config.ini error: {ex}")
         code += 1

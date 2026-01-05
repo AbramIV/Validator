@@ -20,13 +20,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.show()    
     
-    def cycle(self):  
+    def cycle(self):
         self.worker.work()
-
         self.tipMsg.setText(self.worker.message)
-        self.tipMsg.setStyleSheet(styles.MESSAGE[self.worker.error or self.worker.client.error])
-        if self.worker.error or self.worker.client.error:
-            self.mistakeMsg.hide()
 
         self.lable_RH1.setStyleSheet(styles.INDICATOR[self.worker.input[Input.RH1.value]])
         self.lable_RH1.setText("RH 1 " + styles.INDICATOR_TEXT[self.worker.input[Input.RH1.value]])
@@ -40,12 +36,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.label_LH2.setStyleSheet(styles.INDICATOR[self.worker.input[Input.LH2.value]])
         self.label_LH2.setText("LH 2 " + styles.INDICATOR_TEXT[self.worker.input[Input.LH2.value]])
 
-        if self.worker.mistake.value: 
+        if self.worker.mistake.value and not self.worker.reset_count and not (self.worker.error or self.worker.client.error):
             if self.worker.mistake in (MistakeType.AddedAfterStart, MistakeType.MoreThanOneTaken):
-                self.mistakeMsg.setStyleSheet(styles.BACKGROUND[styles.RED])
+                self.mistakeMsg.setStyleSheet(styles.POPUP_MESSAGE[styles.RED])
             else:
-                self.mistakeMsg.setStyleSheet(styles.BACKGROUND[styles.YELLOW])   
+                self.mistakeMsg.setStyleSheet(styles.POPUP_MESSAGE[styles.YELLOW])
             self.mistakeMsg.setText(self.worker.mistakeMsg)
             self.mistakeMsg.show()
         else:
             self.mistakeMsg.hide()
+            if self.worker.reset_count:
+                self.tipMsg.setStyleSheet(styles.MESSAGE[styles.YELLOW])
+            elif self.worker.error or self.worker.client.error:
+                self.tipMsg.setStyleSheet(styles.MESSAGE[styles.RED])
+            else:
+                self.tipMsg.setStyleSheet(styles.MESSAGE[styles.BLUE])

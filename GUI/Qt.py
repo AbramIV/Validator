@@ -10,11 +10,11 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow: QtWidgets.QMainWindow):
+    def setupUi(self, MainWindow: QtWidgets.QMainWindow) -> None:
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.WindowModality.NonModal)
         MainWindow.setEnabled(True)
-        MainWindow.setFixedSize(356, 407)
+        MainWindow.setFixedSize(355, 400)
         font = QtGui.QFont()
         font.setBold(False)
         MainWindow.setFont(font)
@@ -102,6 +102,7 @@ class Ui_MainWindow(object):
         self.mistakeMsg.setFont(font)
         self.mistakeMsg.setText("")
         self.mistakeMsg.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.mistakeMsg.setWordWrap(True)
         self.mistakeMsg.setObjectName("mistakeMsg")
         MainWindow.setCentralWidget(self.centralwidget)
 

@@ -1,5 +1,4 @@
 import logging
-import requests
 from core.enums import AppArguments, Input, MistakeType, Output, PrinterStatus, StepType
 from core.hardware import USB5860, Printer, Scanner
 from core.http import HttpClient
@@ -27,12 +26,15 @@ class Worker():
         self.last_input = self.input
         self.sensors_sum = 0
         self.sensors_last_sum = 0
-        self.reset = 0
+        self.reset_interval = int(arguments[AppArguments.RESET_INTERVAL.value])
+        self.reset_count = 0
+        self.reset_delay = 0
         self.output = [0, 0, 0, 0, 0, 0, 0, 0]
         self.message = ""
-        self.mistakeMsg = ""
-        self.scanCount = 0
-        self.validateCount = 0
+        self.last_message = ""
+        self.mistake_message = ""
+        self.scan_count = 0
+        self.validate_count = 0
         self.qr1 = ""
         self.qr2 = ""
         self.qr3 = ""
@@ -53,7 +55,7 @@ class Worker():
         self.scanner_thread.start()
 
     def work(self):
-        if not self.poll(): return
+        if not self.poll() or self.reset(): return
         
         if self.shift.currentStep.type == StepType.Fill:
             if self.sensors_sum == MAX_POSITIONS_COUNT:
@@ -75,7 +77,7 @@ class Worker():
                 self.client.reset()
                 if  self.sensors_sum > self.sensors_last_sum: 
                     self.mistake = MistakeType.AddedAfterStart
-                    self.mistakeMsg = "No devuelva las piezas, finalice el proceso!\nElige uno parte para continuar!"
+                    self.mistakeMsg = "No devuelva las piezas!\nElige uno parte para continuar!"
                 if (self.sensors_last_sum - self.sensors_sum) == 1:   
                     if self.input[Input.RH1.value] != self.last_input[Input.RH1.value]:
                         self.message = "Esta parte de la izquierda!\n"
@@ -207,7 +209,7 @@ class Worker():
                     self.shift = Shift(StepType.Pick)
                     self.message = self.printer.message + " Elige uno parte!"
         
-        """   
+        """ in case of printer has api for status
         if self.shift.currentStep.type == StepType.Print:
             status = self.printer.get_status()
             if status == PrinterStatus.Printing:
@@ -228,7 +230,7 @@ class Worker():
                 self.mistakeMsg = "No extraiga la pieza hasta que haya terminado el último proceso!\nInstalar todos partes para continuar!"
             else:
                 self.mistake = MistakeType.AddedAfterStart
-                self.mistakeMsg = "No devuelva las piezas, finalice el proceso!\nElige uno parte para continuar!"
+                self.mistakeMsg = "No devuelva las piezas!\nElige uno parte para continuar!"
             self.clear()
             return False
         return True
@@ -238,7 +240,6 @@ class Worker():
             self.input = self.device.readInputsAsList()
             self.sensors_sum = self.input[Input.RH1.value] + self.input[Input.RH2.value] + self.input[Input.LH1.value] + self.input[Input.LH2.value]
             self.output = self.device.readOutputsAsList()
-            self.reset = self.input[Input.Button.value]
 
             if self.error:
                 self.error = False
@@ -254,6 +255,32 @@ class Worker():
             return False
         return True
             
+    def reset(self):
+        if self.input[Input.Button.value]:
+            if self.reset_delay < 15:
+                self.reset_delay += 1
+                return True
+        
+            if self.reset_count >= self.reset_interval:
+                self.clear()
+                self.mistake = MistakeType.Nope
+                self.mistake_message = ""
+                self.message = "Sistema reiniciado.\nSuelte el boton!"
+                return True
+            if self.reset_count < 1:
+                self.last_message = self.message
+            self.reset_count += 1
+            self.message = f"Reiniciando el sistema\nNo suelte el botón... {self.reset_interval-self.reset_count}"
+            self.logger.warning(f"Botón de reinicio presionado: {self.reset_interval-self.reset_count}.")
+            return True
+        else:
+            if self.reset_count > 0:
+                self.reset_count = 0
+                self.message = self.last_message
+                self.last_message = ""
+            self.reset_delay = 0
+        return False
+
     def clear(self):
         self.sensors_last_sum = 0
         self.scanCount = 0
