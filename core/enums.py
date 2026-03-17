@@ -33,6 +33,7 @@ class MistakeType(Enum):
     MoreThanOneTaken = 1
     AddedAfterStart = 2
     CodeScannedTwice = 3
+    PrintedCodeInvalid = 4
 
 class AppArguments(Enum):
     IP_VALIDATE = 0

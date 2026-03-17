@@ -11,8 +11,6 @@ MAX_POSITIONS_COUNT = 4
 DEVICE_DESCRIPTION = "USB-5860,BID#0"
 PROFILE_PATH = u"../../profile/USB-5860.xml"
 
-# ADD validation of QR codes in API 1 response
-
 class Worker():
     def __init__(self, arguments):
         self.logger = logging.getLogger("__main__")
@@ -40,6 +38,7 @@ class Worker():
         self.pcb1 = ""
         self.pcb2 = ""
         self.heatsink = ""
+        self.heatsink_printed = ""
         self.side = ""
         self.url = ""
         self.zpl = ""
@@ -65,8 +64,8 @@ class Worker():
                 self.shift.step(StepType.Pick)
                 self.sensors_last_sum = self.sensors_sum
                 self.message = "Elige uno parte!"
-                if self.mistake == MistakeType.MoreThanOneTaken:
-                    self.mistake = MistakeType.Nope
+                #if self.mistake == MistakeType.MoreThanOneTaken:
+                self.mistake = MistakeType.Nope
             else:
                 if not self.client.error:
                     self.message = "Instalar todos partes."
@@ -74,6 +73,9 @@ class Worker():
         if self.shift.currentStep.type == StepType.Pick:
             self.scanCount = 0
             self.validateCount = 0
+            self.pcb1 = ""
+            self.pcb2 = ""
+            self.heatsink = ""
             if self.sensors_last_sum != self.sensors_sum:
                 self.mistake = MistakeType.Nope
                 self.client.reset()
@@ -109,16 +111,16 @@ class Worker():
 
             if self.scanner.isScanned:
                 if self.scanCount == 0:
-                    self.pcb1 = "114400505908QEBUF0601400061" #"".join(self.scanner.buffer)
+                    self.pcb1 = "114400505908QEBUF0601400062" #"".join(self.scanner.buffer)
                     self.message = "Escanear el codigo 2!"
                     self.scanCount += 1
                 elif self.scanCount == 1:
-                    self.pcb2 = "114400505908QEBUF0601400062" #"".join(self.scanner.buffer)
+                    self.pcb2 = "114400505908QEBUF0601400061" #"".join(self.scanner.buffer)
                     if self.pcb1 == self.pcb2:
                         self.mistake = MistakeType.CodeScannedTwice
-                        self.mistakeMsg = "Escaneaste lo mismo!\nEscanea el segundo codigo QR!" 
+                        self.mistakeMsg = "Escaneaste lo mismo!\nEscanea el segundo codigo QR!"
                     else:
-                        self.url = f"http://{self.ip_api}/apiDB/api/getHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&side={self.side}"
+                        self.url = f"http://{self.ip_api}/apiDB/api/getHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&side=RH"#{self.side}"
                         self.mistake = MistakeType.Nope
                         self.shift.step(StepType.Valid)
                         self.message = "Validacion, espera..."
@@ -128,9 +130,12 @@ class Worker():
                     if self.heatsink in (self.pcb1, self.pcb2):
                         self.mistake = MistakeType.CodeScannedTwice
                         self.mistakeMsg = "Escaneó el código de la pieza. ¡Escanee el código impreso!"
+                    elif self.heatsink == self.heatsink_printed:
+                        self.mistake = MistakeType.PrintedCodeInvalid
+                        self.mistakeMsg = "El código escaneado está no correcto!\nEscanea el codigo impreso!"
                     else:
                         self.scanCount = 0
-                        self.url = f"http://{self.ip_api}/apiDB/api/validateHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&heat={self.heatsink}&side={self.side}"
+                        self.url = f"http://{self.ip_api}/apiDB/api/validateHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&heat={self.heatsink}&side=RH"#{self.side}"
                         self.mistake = MistakeType.Nope
                         self.shift.step(StepType.Valid)
                         self.message = "Validacion, espera..."
@@ -174,7 +179,7 @@ class Worker():
                 if self.client.get(self.url):   
                     if self.is_position_valid():    
                         python_object = json.loads(self.client.response)
-                        if python_object['RESULT']:
+                        if python_object[self.client.api2.result] == "true":
                             if self.sensors_sum == 0: 
                                 self.shift = Shift(StepType.Fill)
                                 self.message = "Instalar todos partes."
@@ -183,12 +188,12 @@ class Worker():
                                 self.message = "Elige uno parte!"
                         else:
                             if self.sensors_sum == 0:
-                                self.message = python_object['MESSAGE'] + "\nInstalar todos partes."
+                                self.message = python_object[self.client.api2.message] + "\nInstalar todos partes."
                                 self.shift.save()
                                 self.shift = Shift(StepType.Fill)
                             else:
                                 self.shift = Shift(StepType.Pick)
-                                self.message = python_object['MESSAGE'] + "\nNo valido! Elige uno parte." 
+                                self.message = python_object[self.client.api2.message] + "\nNo valido! Elige uno parte." 
                 else: 
                     if self.is_position_valid():
                         self.logger.error(self.client.response)                    
@@ -289,10 +294,10 @@ class Worker():
         self.sensors_last_sum = 0
         self.scanCount = 0
         self.validateCount = 0
-        #self.pcb1 = ""
-        #self.pcb2 = ""
-        #self.heatsink = ""
-        #self.side = ""
+        self.pcb1 = ""
+        self.pcb2 = ""
+        self.heatsink = ""
+        self.side = ""
         self.url = ""
         self.shift.save()
         self.scanner.reset()

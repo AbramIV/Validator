@@ -13,7 +13,7 @@
     <x>0</x>
     <y>0</y>
     <width>995</width>
-    <height>613</height>
+    <height>595</height>
    </rect>
   </property>
   <property name="font">
@@ -48,7 +48,7 @@
     <property name="geometry">
      <rect>
       <x>420</x>
-      <y>0</y>
+      <y>5</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -72,7 +72,7 @@
     <property name="geometry">
      <rect>
       <x>495</x>
-      <y>35</y>
+      <y>40</y>
       <width>491</width>
       <height>90</height>
      </rect>
@@ -123,7 +123,7 @@
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>35</y>
+      <y>40</y>
       <width>481</width>
       <height>90</height>
      </rect>
@@ -153,7 +153,7 @@
     <property name="geometry">
      <rect>
       <x>495</x>
-      <y>130</y>
+      <y>135</y>
       <width>491</width>
       <height>90</height>
      </rect>
@@ -180,7 +180,7 @@
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>130</y>
+      <y>135</y>
       <width>481</width>
       <height>90</height>
      </rect>
@@ -208,7 +208,7 @@
      <rect>
       <x>10</x>
       <y>270</y>
-      <width>971</width>
+      <width>975</width>
       <height>211</height>
      </rect>
     </property>
@@ -390,19 +390,6 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QProgressBar" name="progressBar">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>580</y>
-      <width>981</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="value">
-     <number>24</number>
     </property>
    </widget>
   </widget>
