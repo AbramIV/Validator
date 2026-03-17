@@ -18,7 +18,7 @@ class Worker():
         self.ip_api = arguments[AppArguments.IP_VALIDATE.value]
 
         self.scanner = Scanner()
-        self.printer = Printer() #arguments[AppArguments.IP_PRINTER.value], arguments[AppArguments.PORT_PRINTER.value])
+        self.printer = Printer()
         self.client = HttpClient(3)
         self.shift = Shift(StepType.Fill)
         
@@ -111,16 +111,16 @@ class Worker():
 
             if self.scanner.isScanned:
                 if self.scanCount == 0:
-                    self.pcb1 = "114400505908QEBUF0601400062" #"".join(self.scanner.buffer)
+                    self.pcb1 = "".join(self.scanner.buffer)
                     self.message = "Escanear el codigo 2!"
                     self.scanCount += 1
                 elif self.scanCount == 1:
-                    self.pcb2 = "114400505908QEBUF0601400061" #"".join(self.scanner.buffer)
+                    self.pcb2 = "".join(self.scanner.buffer)
                     if self.pcb1 == self.pcb2:
                         self.mistake = MistakeType.CodeScannedTwice
                         self.mistakeMsg = "Escaneaste lo mismo!\nEscanea el segundo codigo QR!"
                     else:
-                        self.url = f"http://{self.ip_api}/apiDB/api/getHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&side=RH"#{self.side}"
+                        self.url = f"http://{self.ip_api}/apiDB/api/getHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&side={self.side}"
                         self.mistake = MistakeType.Nope
                         self.shift.step(StepType.Valid)
                         self.message = "Validacion, espera..."
@@ -135,7 +135,7 @@ class Worker():
                         self.mistakeMsg = "El código escaneado está no correcto!\nEscanea el codigo impreso!"
                     else:
                         self.scanCount = 0
-                        self.url = f"http://{self.ip_api}/apiDB/api/validateHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&heat={self.heatsink}&side=RH"#{self.side}"
+                        self.url = f"http://{self.ip_api}/apiDB/api/validateHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&heat={self.heatsink}&side={self.side}"
                         self.mistake = MistakeType.Nope
                         self.shift.step(StepType.Valid)
                         self.message = "Validacion, espera..."
@@ -297,6 +297,7 @@ class Worker():
         self.pcb1 = ""
         self.pcb2 = ""
         self.heatsink = ""
+        self.heatsink_printed = ""
         self.side = ""
         self.url = ""
         self.shift.save()
