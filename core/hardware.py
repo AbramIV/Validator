@@ -127,9 +127,9 @@ class Scanner():
         self.buffer.clear()
 
 class Printer():
-    def __init__(self, ip, port):
-        self.ip = ip
-        self.port = port
+    def __init__(self):
+        self.ip = ""
+        self.port = 0
         self.message = ""
         self.status = PrinterStatus.Normal
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -166,8 +166,14 @@ class Printer():
     def reset(self):
         try:
             self.my_socket.connect((self.ip, self.port))
-            self.my_socket.sendall(PrinterCommand.Reset.encode('utf-8'))
+            self.my_socket.sendall(str(PrinterCommand.Reset).encode('utf-8'))
         except:
             print("reset printer error")
         finally:
             self.my_socket.close()
+
+    def set_ip(self, ip):
+        self.ip = ip
+
+    def set_port(self, port):
+        self.port = port

@@ -11,6 +11,8 @@ MAX_POSITIONS_COUNT = 4
 DEVICE_DESCRIPTION = "USB-5860,BID#0"
 PROFILE_PATH = u"../../profile/USB-5860.xml"
 
+# ADD validation of QR codes in API 1 response
+
 class Worker():
     def __init__(self, arguments):
         self.logger = logging.getLogger("__main__")
@@ -18,8 +20,8 @@ class Worker():
         self.ip_api = arguments[AppArguments.IP_VALIDATE.value]
 
         self.scanner = Scanner()
-        self.printer = Printer(arguments[AppArguments.IP_PRINTER.value], arguments[AppArguments.PORT_PRINTER.value])
-        self.client = HttpClient(1)
+        self.printer = Printer() #arguments[AppArguments.IP_PRINTER.value], arguments[AppArguments.PORT_PRINTER.value])
+        self.client = HttpClient(3)
         self.shift = Shift(StepType.Fill)
         
         self.input = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -35,9 +37,9 @@ class Worker():
         self.mistake_message = ""
         self.scan_count = 0
         self.validate_count = 0
-        self.qr1 = ""
-        self.qr2 = ""
-        self.qr3 = ""
+        self.pcb1 = ""
+        self.pcb2 = ""
+        self.heatsink = ""
         self.side = ""
         self.url = ""
         self.zpl = ""
@@ -107,28 +109,28 @@ class Worker():
 
             if self.scanner.isScanned:
                 if self.scanCount == 0:
-                    self.qr1 = "".join(self.scanner.buffer)
+                    self.pcb1 = "114400505908QEBUF0601400061" #"".join(self.scanner.buffer)
                     self.message = "Escanear el codigo 2!"
                     self.scanCount += 1
                 elif self.scanCount == 1:
-                    self.qr2 = "".join(self.scanner.buffer)
-                    if self.qr1 == self.qr2:
+                    self.pcb2 = "114400505908QEBUF0601400062" #"".join(self.scanner.buffer)
+                    if self.pcb1 == self.pcb2:
                         self.mistake = MistakeType.CodeScannedTwice
                         self.mistakeMsg = "Escaneaste lo mismo!\nEscanea el segundo codigo QR!" 
                     else:
-                        self.url = f"http://{self.ip_api}/apiDB/api/zkw/serials?pcb1={self.qr1}&pcb2={self.qr2}&side={self.side}"
+                        self.url = f"http://{self.ip_api}/apiDB/api/getHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&side={self.side}"
                         self.mistake = MistakeType.Nope
                         self.shift.step(StepType.Valid)
                         self.message = "Validacion, espera..."
                         self.scanCount += 1
                 else:
-                    self.qr3 = "".join(self.scanner.buffer)
-                    if self.qr3 in (self.qr1, self.qr2):
+                    self.heatsink = "".join(self.scanner.buffer)
+                    if self.heatsink in (self.pcb1, self.pcb2):
                         self.mistake = MistakeType.CodeScannedTwice
                         self.mistakeMsg = "Escaneó el código de la pieza. ¡Escanee el código impreso!"
                     else:
                         self.scanCount = 0
-                        self.url = f"http://{self.ip_api}/apiDB/api/zkw/linked?pcb1={self.qr1}&pcb2={self.qr2}&heatsink={self.qr3}"
+                        self.url = f"http://{self.ip_api}/apiDB/api/validateHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&heat={self.heatsink}&side={self.side}"
                         self.mistake = MistakeType.Nope
                         self.shift.step(StepType.Valid)
                         self.message = "Validacion, espera..."
@@ -138,24 +140,26 @@ class Worker():
                        
         if self.shift.currentStep.type == StepType.Valid:
             if self.validateCount < 1:
-                if self.client.get(self.url):
+                if self.client.get(self.url): 
                     if self.is_position_valid():
-                        python_object = json.loads(self.client.message)
-                        if python_object['SUCCESS']:
-                            self.zpl = python_object['ZPL']
+                        python_object = json.loads(self.client.response)
+                        if python_object[self.client.api1.result] == "true":
+                            self.printer.set_ip(python_object[self.client.api1.ip])
+                            self.printer.set_port(int(python_object[self.client.api1.port]))
+                            self.zpl = python_object[self.client.api1.zpl]
                             self.message = "Impresion..."
                             self.shift.step(StepType.Print)
                             self.reprint = True
                             self.validateCount += 1      
                         else:
-                            self.logger.warning(python_object['MESSAGE'])
+                            self.logger.warning(python_object[self.client.api1.message])
                             if self.sensors_sum == 0:
-                                self.message = python_object['MESSAGE'] + "\nInstalar todos partes."
+                                self.message = python_object[self.client.api1.message] + "\nInstalar todos partes."
                                 self.shift.save()
                                 self.shift = Shift(StepType.Fill)
                             else:
                                 self.shift = Shift(StepType.Pick)
-                                self.message = python_object['MESSAGE'] + "\nElige uno parte."            
+                                self.message = python_object[self.client.api1.message] + "\nElige uno parte."            
                 else:
                     if self.is_position_valid():
                         self.logger.error(self.client.message)                    
@@ -169,8 +173,8 @@ class Worker():
             else:
                 if self.client.get(self.url):   
                     if self.is_position_valid():    
-                        python_object = json.loads(self.client.message)
-                        if python_object['SUCCESS']:
+                        python_object = json.loads(self.client.response)
+                        if python_object['RESULT']:
                             if self.sensors_sum == 0: 
                                 self.shift = Shift(StepType.Fill)
                                 self.message = "Instalar todos partes."
@@ -187,7 +191,7 @@ class Worker():
                                 self.message = python_object['MESSAGE'] + "\nNo valido! Elige uno parte." 
                 else: 
                     if self.is_position_valid():
-                        self.logger.error(self.client.message)                    
+                        self.logger.error(self.client.response)                    
                         if self.sensors_sum == 0:
                             self.shift.save()
                             self.message = "HTTP pedido error!\nContactar con soporte O\ninstalar todos para continuar!"
@@ -202,7 +206,7 @@ class Worker():
                 Shift.step(StepType.Scan)
             else:
                 self.logger.error(self.printer.message)
-                if self.sensors_sum == 0: 
+                if self.sensors_sum == 0:
                     self.shift = Shift(StepType.Fill)
                     self.message = self.printer.message + " Instalar todos partes."
                 else: 
@@ -230,7 +234,7 @@ class Worker():
                 self.mistakeMsg = "No extraiga la pieza hasta que haya terminado el último proceso!\nInstalar todos partes para continuar!"
             else:
                 self.mistake = MistakeType.AddedAfterStart
-                self.mistakeMsg = "No devuelva las piezas!\nElige uno parte para continuar!"
+                self.mistakeMsg = "No devuelva las piezas!\nInstalar todos partes para continuar!"
             self.clear()
             return False
         return True
@@ -285,9 +289,10 @@ class Worker():
         self.sensors_last_sum = 0
         self.scanCount = 0
         self.validateCount = 0
-        self.qr1 = ""
-        self.qr2 = ""
-        self.qr3 = ""
+        #self.pcb1 = ""
+        #self.pcb2 = ""
+        #self.heatsink = ""
+        #self.side = ""
         self.url = ""
         self.shift.save()
         self.scanner.reset()

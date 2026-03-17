@@ -36,12 +36,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.label_LH2.setStyleSheet(styles.INDICATOR[self.worker.input[Input.LH2.value]])
         self.label_LH2.setText("LH 2 " + styles.INDICATOR_TEXT[self.worker.input[Input.LH2.value]])
 
+        self.label_PCB1.setText(self.worker.pcb1)
+        self.label_PCB2.setText(self.worker.pcb2)
+        self.label_heat.setText(self.worker.heatsink)
+
         if self.worker.mistake.value and not self.worker.reset_count and not (self.worker.error or self.worker.client.error):
             if self.worker.mistake in (MistakeType.AddedAfterStart, MistakeType.MoreThanOneTaken):
                 self.mistakeMsg.setStyleSheet(styles.POPUP_MESSAGE[styles.RED])
             else:
                 self.mistakeMsg.setStyleSheet(styles.POPUP_MESSAGE[styles.YELLOW])
-            self.mistakeMsg.setText("ACCION INCORRECTA!\n" + self.worker.mistakeMsg)
+            self.mistakeMsg.setText("ACCION INCORRECTA!\n\n" + self.worker.mistakeMsg)
             self.mistakeMsg.show()
         else:
             self.mistakeMsg.hide()
