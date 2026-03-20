@@ -1,6 +1,4 @@
-import asyncio
 import logging
-import aiohttp
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -21,9 +19,6 @@ class HttpClient():
         self.session = requests.Session()
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
-
-        self.api1 = API1_KEY()
-        self.api2 = API2_KEY()
         
     def get(self, url):
         self.reset()
@@ -45,22 +40,3 @@ class HttpClient():
         self.error = False
         self.response = ""
         self.message = ""
-      
-class API1_KEY():
-        result = "Result"
-        ip = "Ip"
-        port = "Port"
-        zpl = "Zpl"
-        heatsink = "Heatsink"
-        pcb1 = "PCB1"
-        pcb2 = "PCB2"
-        message = "Message"
-
-class API2_KEY():
-    def __init__(self):
-        self.result = "Result"
-        self.message = "Message"
-
-
-
-
