@@ -58,8 +58,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.btn_fill.setChecked(not self.btn_fill.isChecked() and self.worker.shift.currentStep.type == StepType.Fill and not self.worker.error)
         self.btn_pick.setChecked(not self.btn_pick.isChecked() and self.worker.shift.currentStep.type == StepType.Pick and not self.worker.error)
-        self.btn_scan_1.setChecked(not self.btn_scan_1.isChecked() and self.worker.shift.currentStep.type == StepType.Scan and not self.worker.error)
-        self.btn_scan_2.setChecked(not self.btn_scan_2.isChecked() and self.worker.shift.currentStep.type == StepType.Scan and not self.worker.error)
+        self.btn_scan_1.setChecked(not self.btn_scan_1.isChecked() and self.worker.shift.currentStep.type == StepType.Scan_1 and not self.worker.error)
+        self.btn_scan_2.setChecked(not self.btn_scan_2.isChecked() and self.worker.shift.currentStep.type == StepType.Scan_2 and not self.worker.error)
         self.btn_print.setChecked(not self.btn_print.isChecked() and self.worker.shift.currentStep.type == StepType.Print and not self.worker.error)
-        self.btn_scan_3.setChecked(not self.btn_scan_3.isChecked() and self.worker.shift.currentStep.type == StepType.Scan and not self.worker.error)
-        self.btn_valid.setChecked(not self.btn_valid.isChecked() and self.worker.shift.currentStep.type == StepType.Valid and not self.worker.error)
+        self.btn_scan_3.setChecked(not self.btn_scan_3.isChecked() and self.worker.shift.currentStep.type == StepType.Scan_3 and not self.worker.error)
+        self.btn_valid.setChecked(not self.btn_valid.isChecked() and (self.worker.shift.currentStep.type == StepType.Valid_1 or self.worker.shift.currentStep.type == StepType.Valid_2) and not self.worker.error)

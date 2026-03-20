@@ -3,9 +3,12 @@ from enum import Enum
 class StepType(Enum):
     Fill = 0
     Pick = 1
-    Scan = 2
-    Print = 3
-    Valid = 4
+    Scan_1 = 2
+    Scan_2 = 3
+    Scan_3 = 4
+    Print = 5
+    Valid_1 = 6
+    Valid_2 = 7
     Nope = 8
     
 class Input(Enum):
