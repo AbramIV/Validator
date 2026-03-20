@@ -21,23 +21,15 @@ class Ui_MainWindow(object):
         MainWindow.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
         MainWindow.setAcceptDrops(False)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("C:\\Main\\Repositories\\Validator\\GUI\\icon.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap("C:\\Main\\Repositories\\Validator\\GUI\\icons/icon.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         MainWindow.setWindowIcon(icon)
-        MainWindow.setStyleSheet("background:#232423")
+        MainWindow.setStyleSheet("background-color: rgb(80, 80, 80);")
         MainWindow.setInputMethodHints(QtCore.Qt.InputMethodHint.ImhNone)
         MainWindow.setUnifiedTitleAndToolBarOnMac(False)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.title_positions = QtWidgets.QLabel(parent=self.centralwidget)
-        self.title_positions.setGeometry(QtCore.QRect(515, 10, 141, 31))
-        font = QtGui.QFont()
-        font.setPointSize(20)
-        self.title_positions.setFont(font)
-        self.title_positions.setAutoFillBackground(False)
-        self.title_positions.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter|QtCore.Qt.AlignmentFlag.AlignTop)
-        self.title_positions.setObjectName("title_positions")
         self.label_LH1 = QtWidgets.QLabel(parent=self.centralwidget)
-        self.label_LH1.setGeometry(QtCore.QRect(590, 50, 400, 100))
+        self.label_LH1.setGeometry(QtCore.QRect(640, 28, 350, 100))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label_LH1.setFont(font)
@@ -47,7 +39,7 @@ class Ui_MainWindow(object):
         self.label_LH1.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_LH1.setObjectName("label_LH1")
         self.lable_RH1 = QtWidgets.QLabel(parent=self.centralwidget)
-        self.lable_RH1.setGeometry(QtCore.QRect(185, 50, 400, 100))
+        self.lable_RH1.setGeometry(QtCore.QRect(285, 28, 350, 100))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.lable_RH1.setFont(font)
@@ -58,7 +50,7 @@ class Ui_MainWindow(object):
         self.lable_RH1.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.lable_RH1.setObjectName("lable_RH1")
         self.label_LH2 = QtWidgets.QLabel(parent=self.centralwidget)
-        self.label_LH2.setGeometry(QtCore.QRect(590, 155, 400, 100))
+        self.label_LH2.setGeometry(QtCore.QRect(640, 133, 350, 100))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label_LH2.setFont(font)
@@ -68,7 +60,7 @@ class Ui_MainWindow(object):
         self.label_LH2.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_LH2.setObjectName("label_LH2")
         self.label_RH2 = QtWidgets.QLabel(parent=self.centralwidget)
-        self.label_RH2.setGeometry(QtCore.QRect(185, 155, 400, 100))
+        self.label_RH2.setGeometry(QtCore.QRect(285, 133, 350, 100))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label_RH2.setFont(font)
@@ -77,199 +69,240 @@ class Ui_MainWindow(object):
         self.label_RH2.setText("")
         self.label_RH2.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_RH2.setObjectName("label_RH2")
-        self.tip_msg = QtWidgets.QLabel(parent=self.centralwidget)
-        self.tip_msg.setGeometry(QtCore.QRect(185, 280, 805, 210))
+        self.msg_tip = QtWidgets.QLabel(parent=self.centralwidget)
+        self.msg_tip.setGeometry(QtCore.QRect(285, 258, 705, 210))
         font = QtGui.QFont()
         font.setPointSize(20)
-        self.tip_msg.setFont(font)
-        self.tip_msg.setStyleSheet("background:#84bcf0;color:darkblack;text-align: center;border-radius: 10px;")
-        self.tip_msg.setText("")
-        self.tip_msg.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.tip_msg.setWordWrap(True)
-        self.tip_msg.setObjectName("tip_msg")
-        self.mistake_msg = QtWidgets.QLabel(parent=self.centralwidget)
-        self.mistake_msg.setGeometry(QtCore.QRect(185, 280, 805, 210))
+        self.msg_tip.setFont(font)
+        self.msg_tip.setStyleSheet("text-align: center;\n"
+"border-radius: 10px;\n"
+"background-color: rgb(45, 135, 255);\n"
+"color:black;")
+        self.msg_tip.setText("")
+        self.msg_tip.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.msg_tip.setWordWrap(True)
+        self.msg_tip.setObjectName("msg_tip")
+        self.msg_mistake = QtWidgets.QLabel(parent=self.centralwidget)
+        self.msg_mistake.setGeometry(QtCore.QRect(285, 258, 705, 210))
         font = QtGui.QFont()
         font.setPointSize(20)
-        self.mistake_msg.setFont(font)
-        self.mistake_msg.setStyleSheet("background-color: rgb(31, 31, 31);")
-        self.mistake_msg.setText("")
-        self.mistake_msg.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.mistake_msg.setWordWrap(True)
-        self.mistake_msg.setObjectName("mistake_msg")
+        self.msg_mistake.setFont(font)
+        self.msg_mistake.setStyleSheet("background-color: rgb(31, 31, 31);border-radius:10px;")
+        self.msg_mistake.setText("")
+        self.msg_mistake.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.msg_mistake.setWordWrap(True)
+        self.msg_mistake.setObjectName("msg_mistake")
         self.label = QtWidgets.QLabel(parent=self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(185, 520, 61, 31))
+        self.label.setGeometry(QtCore.QRect(285, 498, 71, 31))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label.setFont(font)
+        self.label.setStyleSheet("color: rgb(89, 158, 247);")
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(parent=self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(185, 560, 61, 31))
+        self.label_2.setGeometry(QtCore.QRect(285, 538, 71, 31))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label_2.setFont(font)
+        self.label_2.setStyleSheet("color: rgb(89, 158, 247);")
         self.label_2.setObjectName("label_2")
         self.label_3 = QtWidgets.QLabel(parent=self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(185, 600, 111, 31))
+        self.label_3.setGeometry(QtCore.QRect(285, 578, 111, 31))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label_3.setFont(font)
+        self.label_3.setStyleSheet("color: rgb(89, 158, 247);")
         self.label_3.setObjectName("label_3")
         self.label_PCB1 = QtWidgets.QLabel(parent=self.centralwidget)
-        self.label_PCB1.setGeometry(QtCore.QRect(310, 522, 680, 30))
+        self.label_PCB1.setGeometry(QtCore.QRect(410, 500, 580, 30))
         font = QtGui.QFont()
-        font.setPointSize(16)
+        font.setPointSize(18)
         self.label_PCB1.setFont(font)
         self.label_PCB1.setStyleSheet("background:gray;color:black;border-color:black;border-radius: 10px;")
         self.label_PCB1.setFrameShape(QtWidgets.QFrame.Shape.Box)
         self.label_PCB1.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_PCB1.setObjectName("label_PCB1")
         self.label_PCB2 = QtWidgets.QLabel(parent=self.centralwidget)
-        self.label_PCB2.setGeometry(QtCore.QRect(310, 562, 680, 30))
+        self.label_PCB2.setGeometry(QtCore.QRect(410, 540, 580, 30))
         font = QtGui.QFont()
-        font.setPointSize(16)
+        font.setPointSize(18)
         self.label_PCB2.setFont(font)
         self.label_PCB2.setStyleSheet("background:gray;color:black;border-color:black;border-radius: 10px;")
         self.label_PCB2.setFrameShape(QtWidgets.QFrame.Shape.Box)
         self.label_PCB2.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_PCB2.setObjectName("label_PCB2")
         self.label_heat = QtWidgets.QLabel(parent=self.centralwidget)
-        self.label_heat.setGeometry(QtCore.QRect(310, 602, 680, 30))
+        self.label_heat.setGeometry(QtCore.QRect(410, 580, 580, 30))
         font = QtGui.QFont()
-        font.setPointSize(16)
+        font.setPointSize(18)
         self.label_heat.setFont(font)
         self.label_heat.setStyleSheet("background:gray;color:black;border-color:black;border-radius: 10px;")
         self.label_heat.setFrameShape(QtWidgets.QFrame.Shape.Box)
         self.label_heat.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_heat.setObjectName("label_heat")
-        self.btn_fill = QtWidgets.QToolButton(parent=self.centralwidget)
-        self.btn_fill.setGeometry(QtCore.QRect(0, 0, 170, 80))
+        self.btn_insert = QtWidgets.QToolButton(parent=self.centralwidget)
+        self.btn_insert.setGeometry(QtCore.QRect(0, 0, 270, 80))
         font = QtGui.QFont()
-        font.setPointSize(18)
-        self.btn_fill.setFont(font)
-        self.btn_fill.setStyleSheet("/* Default (Unchecked) State */\n"
+        font.setFamily("Times New Roman")
+        font.setPointSize(20)
+        self.btn_insert.setFont(font)
+        self.btn_insert.setStyleSheet("/* Default (Unchecked) State */\n"
 "QToolButton {\n"
-"\n"
+"    background-color: rgb(47, 47, 47);\n"
+"    color: rgb(0, 0, 0);\n"
 "}\n"
 "\n"
 "/* Checked State */\n"
 "QToolButton:checked {\n"
-"    background-color: green;\n"
+"    background-color: rgb(70, 200, 100);\n"
+"    color: rgb(0, 0, 0);\n"
 "}")
-        self.btn_fill.setCheckable(True)
-        self.btn_fill.setObjectName("btn_fill")
+        self.btn_insert.setIconSize(QtCore.QSize(32, 32))
+        self.btn_insert.setCheckable(True)
+        self.btn_insert.setPopupMode(QtWidgets.QToolButton.ToolButtonPopupMode.DelayedPopup)
+        self.btn_insert.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.btn_insert.setObjectName("btn_insert")
         self.btn_pick = QtWidgets.QToolButton(parent=self.centralwidget)
-        self.btn_pick.setGeometry(QtCore.QRect(0, 80, 170, 80))
+        self.btn_pick.setEnabled(True)
+        self.btn_pick.setGeometry(QtCore.QRect(0, 80, 270, 80))
         font = QtGui.QFont()
-        font.setPointSize(18)
+        font.setFamily("Times New Roman")
+        font.setPointSize(20)
         self.btn_pick.setFont(font)
         self.btn_pick.setStyleSheet("/* Default (Unchecked) State */\n"
 "QToolButton {\n"
-"\n"
+"    background-color: rgb(47, 47, 47);\n"
+"    color: rgb(0, 0, 0);\n"
 "}\n"
 "\n"
 "/* Checked State */\n"
 "QToolButton:checked {\n"
-"    background-color: green;\n"
+"    background-color: rgb(70, 200, 100);\n"
+"    color: rgb(0, 0, 0);\n"
 "}")
+        self.btn_pick.setIconSize(QtCore.QSize(32, 32))
         self.btn_pick.setCheckable(True)
+        self.btn_pick.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.btn_pick.setObjectName("btn_pick")
-        self.btn_scan_1 = QtWidgets.QToolButton(parent=self.centralwidget)
-        self.btn_scan_1.setGeometry(QtCore.QRect(0, 160, 170, 80))
+        self.btn_scan_pcb_1 = QtWidgets.QToolButton(parent=self.centralwidget)
+        self.btn_scan_pcb_1.setGeometry(QtCore.QRect(0, 160, 270, 80))
         font = QtGui.QFont()
-        font.setPointSize(18)
-        self.btn_scan_1.setFont(font)
-        self.btn_scan_1.setStyleSheet("/* Default (Unchecked) State */\n"
+        font.setFamily("Times New Roman")
+        font.setPointSize(20)
+        self.btn_scan_pcb_1.setFont(font)
+        self.btn_scan_pcb_1.setStyleSheet("/* Default (Unchecked) State */\n"
 "QToolButton {\n"
-"\n"
+"    background-color: rgb(47, 47, 47);\n"
+"    color: rgb(0, 0, 0);\n"
 "}\n"
 "\n"
 "/* Checked State */\n"
 "QToolButton:checked {\n"
-"    background-color: green;\n"
+"    background-color: rgb(70, 200, 100);\n"
+"    color: rgb(0, 0, 0);\n"
 "}")
-        self.btn_scan_1.setCheckable(True)
-        self.btn_scan_1.setObjectName("btn_scan_1")
-        self.btn_scan_2 = QtWidgets.QToolButton(parent=self.centralwidget)
-        self.btn_scan_2.setGeometry(QtCore.QRect(0, 240, 170, 80))
+        self.btn_scan_pcb_1.setIconSize(QtCore.QSize(32, 32))
+        self.btn_scan_pcb_1.setCheckable(True)
+        self.btn_scan_pcb_1.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.btn_scan_pcb_1.setObjectName("btn_scan_pcb_1")
+        self.btn_scan_pcb_2 = QtWidgets.QToolButton(parent=self.centralwidget)
+        self.btn_scan_pcb_2.setGeometry(QtCore.QRect(0, 240, 270, 80))
         font = QtGui.QFont()
-        font.setPointSize(18)
-        self.btn_scan_2.setFont(font)
-        self.btn_scan_2.setStyleSheet("/* Default (Unchecked) State */\n"
+        font.setFamily("Times New Roman")
+        font.setPointSize(20)
+        self.btn_scan_pcb_2.setFont(font)
+        self.btn_scan_pcb_2.setStyleSheet("/* Default (Unchecked) State */\n"
 "QToolButton {\n"
-"\n"
+"    background-color: rgb(47, 47, 47);\n"
+"    color: rgb(0, 0, 0);\n"
 "}\n"
 "\n"
 "/* Checked State */\n"
 "QToolButton:checked {\n"
-"    background-color: green;\n"
+"    background-color: rgb(70, 200, 100);\n"
+"    color: rgb(0, 0, 0);\n"
 "}")
-        self.btn_scan_2.setCheckable(True)
-        self.btn_scan_2.setObjectName("btn_scan_2")
+        self.btn_scan_pcb_2.setIconSize(QtCore.QSize(32, 32))
+        self.btn_scan_pcb_2.setCheckable(True)
+        self.btn_scan_pcb_2.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.btn_scan_pcb_2.setObjectName("btn_scan_pcb_2")
         self.btn_print = QtWidgets.QToolButton(parent=self.centralwidget)
-        self.btn_print.setGeometry(QtCore.QRect(0, 320, 170, 80))
+        self.btn_print.setGeometry(QtCore.QRect(0, 400, 270, 80))
         font = QtGui.QFont()
-        font.setPointSize(18)
+        font.setFamily("Times New Roman")
+        font.setPointSize(20)
         self.btn_print.setFont(font)
         self.btn_print.setStyleSheet("/* Default (Unchecked) State */\n"
 "QToolButton {\n"
-"\n"
+"    background-color: rgb(47, 47, 47);\n"
+"    color: rgb(0, 0, 0);\n"
 "}\n"
 "\n"
 "/* Checked State */\n"
 "QToolButton:checked {\n"
-"    background-color: green;\n"
+"    background-color: rgb(70, 200, 100);\n"
+"    color: rgb(0, 0, 0);\n"
 "}")
         self.btn_print.setCheckable(True)
         self.btn_print.setObjectName("btn_print")
-        self.btn_scan_3 = QtWidgets.QToolButton(parent=self.centralwidget)
-        self.btn_scan_3.setGeometry(QtCore.QRect(0, 400, 170, 80))
+        self.btn_scan_heatsink = QtWidgets.QToolButton(parent=self.centralwidget)
+        self.btn_scan_heatsink.setEnabled(True)
+        self.btn_scan_heatsink.setGeometry(QtCore.QRect(0, 480, 270, 80))
         font = QtGui.QFont()
-        font.setPointSize(18)
-        self.btn_scan_3.setFont(font)
-        self.btn_scan_3.setStyleSheet("/* Default (Unchecked) State */\n"
+        font.setFamily("Times New Roman")
+        font.setPointSize(20)
+        self.btn_scan_heatsink.setFont(font)
+        self.btn_scan_heatsink.setStyleSheet("/* Default (Unchecked) State */\n"
 "QToolButton {\n"
-"\n"
+"    background-color: rgb(47, 47, 47);\n"
+"    color: rgb(0, 0, 0);\n"
 "}\n"
 "\n"
 "/* Checked State */\n"
 "QToolButton:checked {\n"
-"    background-color: green;\n"
+"    background-color: rgb(70, 200, 100);\n"
+"    color: rgb(0, 0, 0);\n"
 "}")
-        self.btn_scan_3.setCheckable(True)
-        self.btn_scan_3.setObjectName("btn_scan_3")
-        self.btn_valid = QtWidgets.QToolButton(parent=self.centralwidget)
-        self.btn_valid.setGeometry(QtCore.QRect(0, 480, 170, 80))
+        self.btn_scan_heatsink.setCheckable(True)
+        self.btn_scan_heatsink.setObjectName("btn_scan_heatsink")
+        self.btn_valid_heatsink = QtWidgets.QToolButton(parent=self.centralwidget)
+        self.btn_valid_heatsink.setEnabled(True)
+        self.btn_valid_heatsink.setGeometry(QtCore.QRect(0, 560, 270, 90))
         font = QtGui.QFont()
-        font.setPointSize(18)
-        self.btn_valid.setFont(font)
-        self.btn_valid.setStyleSheet("/* Default (Unchecked) State */\n"
+        font.setFamily("Times New Roman")
+        font.setPointSize(20)
+        self.btn_valid_heatsink.setFont(font)
+        self.btn_valid_heatsink.setStyleSheet("/* Default (Unchecked) State */\n"
 "QToolButton {\n"
-"\n"
+"    background-color: rgb(47, 47, 47);\n"
+"    color: rgb(0, 0, 0);\n"
 "}\n"
 "\n"
 "/* Checked State */\n"
 "QToolButton:checked {\n"
-"    background-color: green;\n"
+"    background-color: rgb(70, 200, 100);\n"
+"    color: rgb(0, 0, 0);\n"
 "}")
-        self.btn_valid.setCheckable(True)
-        self.btn_valid.setObjectName("btn_valid")
-        self.btn_reserve = QtWidgets.QToolButton(parent=self.centralwidget)
-        self.btn_reserve.setGeometry(QtCore.QRect(0, 560, 170, 90))
+        self.btn_valid_heatsink.setCheckable(True)
+        self.btn_valid_heatsink.setObjectName("btn_valid_heatsink")
+        self.btn_valid_pcb = QtWidgets.QToolButton(parent=self.centralwidget)
+        self.btn_valid_pcb.setGeometry(QtCore.QRect(0, 320, 270, 80))
         font = QtGui.QFont()
-        font.setPointSize(18)
-        self.btn_reserve.setFont(font)
-        self.btn_reserve.setStyleSheet("/* Default (Unchecked) State */\n"
+        font.setFamily("Times New Roman")
+        font.setPointSize(20)
+        self.btn_valid_pcb.setFont(font)
+        self.btn_valid_pcb.setStyleSheet("/* Default (Unchecked) State */\n"
 "QToolButton {\n"
-"\n"
+"    background-color: rgb(47, 47, 47);\n"
+"    color: rgb(0, 0, 0);\n"
 "}\n"
 "\n"
 "/* Checked State */\n"
 "QToolButton:checked {\n"
-"    background-color: green;\n"
+"    background-color: rgb(70, 200, 100);\n"
+"    color: rgb(0, 0, 0);\n"
 "}")
-        self.btn_reserve.setText("")
-        self.btn_reserve.setObjectName("btn_reserve")
+        self.btn_valid_pcb.setObjectName("btn_valid_pcb")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -278,18 +311,17 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Validacion ZKW"))
-        self.title_positions.setText(_translate("MainWindow", "Posiciones"))
-        self.label.setText(_translate("MainWindow", "PCB1"))
-        self.label_2.setText(_translate("MainWindow", "PCB2"))
+        self.label.setText(_translate("MainWindow", "PCB 1"))
+        self.label_2.setText(_translate("MainWindow", "PCB 2"))
         self.label_3.setText(_translate("MainWindow", "Heatsink"))
         self.label_PCB1.setText(_translate("MainWindow", "114400505908QEBUF0601400061"))
         self.label_PCB2.setText(_translate("MainWindow", "114400505908QEBUF0601400062"))
         self.label_heat.setText(_translate("MainWindow", "1144.006.06300000000000058Q"))
-        self.btn_fill.setText(_translate("MainWindow", "PUT ALL"))
-        self.btn_pick.setText(_translate("MainWindow", "PICK ONE"))
-        self.btn_scan_1.setText(_translate("MainWindow", "SCAN PCB 1"))
-        self.btn_scan_2.setText(_translate("MainWindow", "SCAN PCB 2"))
-        self.btn_print.setText(_translate("MainWindow", "PRINTING"))
-        self.btn_scan_3.setText(_translate("MainWindow", "SCAN\n"
-"HEATSINK"))
-        self.btn_valid.setText(_translate("MainWindow", "VALIDATION"))
+        self.btn_insert.setText(_translate("MainWindow", "Insertar todo"))
+        self.btn_pick.setText(_translate("MainWindow", "Toma uno"))
+        self.btn_scan_pcb_1.setText(_translate("MainWindow", "Escanear PCB 1"))
+        self.btn_scan_pcb_2.setText(_translate("MainWindow", " Escanear PCB 2"))
+        self.btn_print.setText(_translate("MainWindow", "Impresión"))
+        self.btn_scan_heatsink.setText(_translate("MainWindow", "Escanear heatsink"))
+        self.btn_valid_heatsink.setText(_translate("MainWindow", "Validacion heatsink"))
+        self.btn_valid_pcb.setText(_translate("MainWindow", "Validacion PCBs"))

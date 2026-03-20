@@ -1,14 +1,14 @@
 from enum import Enum
 
 class StepType(Enum):
-    Fill = 0
+    Insert = 0
     Pick = 1
-    Scan_1 = 2
-    Scan_2 = 3
-    Scan_3 = 4
+    Scan_PCB_1 = 2
+    Scan_PCB_2 = 3
+    Valid_PCB = 4
     Print = 5
-    Valid_1 = 6
-    Valid_2 = 7
+    Scan_Heatsink = 6
+    Valid_Heatsink = 7
     Nope = 8
     
 class Input(Enum):

@@ -32,10 +32,10 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>icon.png</normaloff>icon.png</iconset>
+    <normaloff>icons/icon.png</normaloff>icons/icon.png</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background:#232423</string>
+   <string notr="true">background-color: rgb(80, 80, 80);</string>
   </property>
   <property name="inputMethodHints">
    <set>Qt::InputMethodHint::ImhNone</set>
@@ -44,36 +44,12 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="title_positions">
-    <property name="geometry">
-     <rect>
-      <x>515</x>
-      <y>10</y>
-      <width>141</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>20</pointsize>
-     </font>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="text">
-     <string>Posiciones</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_LH1">
     <property name="geometry">
      <rect>
-      <x>590</x>
-      <y>50</y>
-      <width>400</width>
+      <x>640</x>
+      <y>28</y>
+      <width>350</width>
       <height>100</height>
      </rect>
     </property>
@@ -98,9 +74,9 @@
    <widget class="QLabel" name="lable_RH1">
     <property name="geometry">
      <rect>
-      <x>185</x>
-      <y>50</y>
-      <width>400</width>
+      <x>285</x>
+      <y>28</y>
+      <width>350</width>
       <height>100</height>
      </rect>
     </property>
@@ -128,9 +104,9 @@
    <widget class="QLabel" name="label_LH2">
     <property name="geometry">
      <rect>
-      <x>590</x>
-      <y>155</y>
-      <width>400</width>
+      <x>640</x>
+      <y>133</y>
+      <width>350</width>
       <height>100</height>
      </rect>
     </property>
@@ -155,9 +131,9 @@
    <widget class="QLabel" name="label_RH2">
     <property name="geometry">
      <rect>
-      <x>185</x>
-      <y>155</y>
-      <width>400</width>
+      <x>285</x>
+      <y>133</y>
+      <width>350</width>
       <height>100</height>
      </rect>
     </property>
@@ -179,12 +155,12 @@
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="tip_msg">
+   <widget class="QLabel" name="msg_tip">
     <property name="geometry">
      <rect>
-      <x>185</x>
-      <y>280</y>
-      <width>805</width>
+      <x>285</x>
+      <y>258</y>
+      <width>705</width>
       <height>210</height>
      </rect>
     </property>
@@ -194,7 +170,10 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background:#84bcf0;color:darkblack;text-align: center;border-radius: 10px;</string>
+     <string notr="true">text-align: center;
+border-radius: 10px;
+background-color: rgb(45, 135, 255);
+color:black;</string>
     </property>
     <property name="text">
      <string/>
@@ -206,12 +185,12 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="mistake_msg">
+   <widget class="QLabel" name="msg_mistake">
     <property name="geometry">
      <rect>
-      <x>185</x>
-      <y>280</y>
-      <width>805</width>
+      <x>285</x>
+      <y>258</y>
+      <width>705</width>
       <height>210</height>
      </rect>
     </property>
@@ -221,7 +200,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(31, 31, 31);</string>
+     <string notr="true">background-color: rgb(31, 31, 31);border-radius:10px;</string>
     </property>
     <property name="text">
      <string/>
@@ -236,9 +215,9 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>185</x>
-      <y>520</y>
-      <width>61</width>
+      <x>285</x>
+      <y>498</y>
+      <width>71</width>
       <height>31</height>
      </rect>
     </property>
@@ -247,16 +226,19 @@
       <pointsize>20</pointsize>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 158, 247);</string>
+    </property>
     <property name="text">
-     <string>PCB1</string>
+     <string>PCB 1</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>185</x>
-      <y>560</y>
-      <width>61</width>
+      <x>285</x>
+      <y>538</y>
+      <width>71</width>
       <height>31</height>
      </rect>
     </property>
@@ -265,15 +247,18 @@
       <pointsize>20</pointsize>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 158, 247);</string>
+    </property>
     <property name="text">
-     <string>PCB2</string>
+     <string>PCB 2</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>185</x>
-      <y>600</y>
+      <x>285</x>
+      <y>578</y>
       <width>111</width>
       <height>31</height>
      </rect>
@@ -283,6 +268,9 @@
       <pointsize>20</pointsize>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 158, 247);</string>
+    </property>
     <property name="text">
      <string>Heatsink</string>
     </property>
@@ -290,15 +278,15 @@
    <widget class="QLabel" name="label_PCB1">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>522</y>
-      <width>680</width>
+      <x>410</x>
+      <y>500</y>
+      <width>580</width>
       <height>30</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>16</pointsize>
+      <pointsize>18</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -317,15 +305,15 @@
    <widget class="QLabel" name="label_PCB2">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>562</y>
-      <width>680</width>
+      <x>410</x>
+      <y>540</y>
+      <width>580</width>
       <height>30</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>16</pointsize>
+      <pointsize>18</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -344,15 +332,15 @@
    <widget class="QLabel" name="label_heat">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>602</y>
-      <width>680</width>
+      <x>410</x>
+      <y>580</y>
+      <width>580</width>
       <height>30</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>16</pointsize>
+      <pointsize>18</pointsize>
      </font>
     </property>
     <property name="styleSheet">
@@ -368,258 +356,329 @@
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QToolButton" name="btn_fill">
+   <widget class="QToolButton" name="btn_insert">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>170</width>
+      <width>270</width>
       <height>80</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>18</pointsize>
+      <family>Times New Roman</family>
+      <pointsize>20</pointsize>
      </font>
     </property>
     <property name="styleSheet">
      <string notr="true">/* Default (Unchecked) State */
 QToolButton {
-
+	background-color: rgb(47, 47, 47);
+	color: rgb(0, 0, 0);
 }
 
 /* Checked State */
 QToolButton:checked {
-    background-color: green;
+	background-color: rgb(70, 200, 100);
+	color: rgb(0, 0, 0);
 }</string>
     </property>
     <property name="text">
-     <string>PUT ALL</string>
+     <string>Insertar todo</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>32</width>
+      <height>32</height>
+     </size>
     </property>
     <property name="checkable">
      <bool>true</bool>
     </property>
+    <property name="popupMode">
+     <enum>QToolButton::ToolButtonPopupMode::DelayedPopup</enum>
+    </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+    </property>
    </widget>
    <widget class="QToolButton" name="btn_pick">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>80</y>
-      <width>170</width>
+      <width>270</width>
       <height>80</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>18</pointsize>
+      <family>Times New Roman</family>
+      <pointsize>20</pointsize>
      </font>
     </property>
     <property name="styleSheet">
      <string notr="true">/* Default (Unchecked) State */
 QToolButton {
-
+	background-color: rgb(47, 47, 47);
+	color: rgb(0, 0, 0);
 }
 
 /* Checked State */
 QToolButton:checked {
-    background-color: green;
+	background-color: rgb(70, 200, 100);
+	color: rgb(0, 0, 0);
 }</string>
     </property>
     <property name="text">
-     <string>PICK ONE</string>
+     <string>Toma uno</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>32</width>
+      <height>32</height>
+     </size>
     </property>
     <property name="checkable">
      <bool>true</bool>
     </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+    </property>
    </widget>
-   <widget class="QToolButton" name="btn_scan_1">
+   <widget class="QToolButton" name="btn_scan_pcb_1">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>160</y>
-      <width>170</width>
+      <width>270</width>
       <height>80</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>18</pointsize>
+      <family>Times New Roman</family>
+      <pointsize>20</pointsize>
      </font>
     </property>
     <property name="styleSheet">
      <string notr="true">/* Default (Unchecked) State */
 QToolButton {
-
+	background-color: rgb(47, 47, 47);
+	color: rgb(0, 0, 0);
 }
 
 /* Checked State */
 QToolButton:checked {
-    background-color: green;
+	background-color: rgb(70, 200, 100);
+	color: rgb(0, 0, 0);
 }</string>
     </property>
     <property name="text">
-     <string>SCAN PCB 1</string>
+     <string>Escanear PCB 1</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>32</width>
+      <height>32</height>
+     </size>
     </property>
     <property name="checkable">
      <bool>true</bool>
     </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
+    </property>
    </widget>
-   <widget class="QToolButton" name="btn_scan_2">
+   <widget class="QToolButton" name="btn_scan_pcb_2">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>240</y>
-      <width>170</width>
+      <width>270</width>
       <height>80</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>18</pointsize>
+      <family>Times New Roman</family>
+      <pointsize>20</pointsize>
      </font>
     </property>
     <property name="styleSheet">
      <string notr="true">/* Default (Unchecked) State */
 QToolButton {
-
+	background-color: rgb(47, 47, 47);
+	color: rgb(0, 0, 0);
 }
 
 /* Checked State */
 QToolButton:checked {
-    background-color: green;
+	background-color: rgb(70, 200, 100);
+	color: rgb(0, 0, 0);
 }</string>
     </property>
     <property name="text">
-     <string>SCAN PCB 2</string>
+     <string> Escanear PCB 2</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>32</width>
+      <height>32</height>
+     </size>
     </property>
     <property name="checkable">
      <bool>true</bool>
+    </property>
+    <property name="toolButtonStyle">
+     <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
     </property>
    </widget>
    <widget class="QToolButton" name="btn_print">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>320</y>
-      <width>170</width>
-      <height>80</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>18</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">/* Default (Unchecked) State */
-QToolButton {
-
-}
-
-/* Checked State */
-QToolButton:checked {
-    background-color: green;
-}</string>
-    </property>
-    <property name="text">
-     <string>PRINTING</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QToolButton" name="btn_scan_3">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
       <y>400</y>
-      <width>170</width>
+      <width>270</width>
       <height>80</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>18</pointsize>
+      <family>Times New Roman</family>
+      <pointsize>20</pointsize>
      </font>
     </property>
     <property name="styleSheet">
      <string notr="true">/* Default (Unchecked) State */
 QToolButton {
-
+	background-color: rgb(47, 47, 47);
+	color: rgb(0, 0, 0);
 }
 
 /* Checked State */
 QToolButton:checked {
-    background-color: green;
+	background-color: rgb(70, 200, 100);
+	color: rgb(0, 0, 0);
 }</string>
     </property>
     <property name="text">
-     <string>SCAN
-HEATSINK</string>
+     <string>Impresión</string>
     </property>
     <property name="checkable">
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QToolButton" name="btn_valid">
+   <widget class="QToolButton" name="btn_scan_heatsink">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>480</y>
-      <width>170</width>
+      <width>270</width>
       <height>80</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>18</pointsize>
+      <family>Times New Roman</family>
+      <pointsize>20</pointsize>
      </font>
     </property>
     <property name="styleSheet">
      <string notr="true">/* Default (Unchecked) State */
 QToolButton {
-
+	background-color: rgb(47, 47, 47);
+	color: rgb(0, 0, 0);
 }
 
 /* Checked State */
 QToolButton:checked {
-    background-color: green;
+	background-color: rgb(70, 200, 100);
+	color: rgb(0, 0, 0);
 }</string>
     </property>
     <property name="text">
-     <string>VALIDATION</string>
+     <string>Escanear heatsink</string>
     </property>
     <property name="checkable">
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QToolButton" name="btn_reserve">
+   <widget class="QToolButton" name="btn_valid_heatsink">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>560</y>
-      <width>170</width>
+      <width>270</width>
       <height>90</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>18</pointsize>
+      <family>Times New Roman</family>
+      <pointsize>20</pointsize>
      </font>
     </property>
     <property name="styleSheet">
      <string notr="true">/* Default (Unchecked) State */
 QToolButton {
-
+	background-color: rgb(47, 47, 47);
+	color: rgb(0, 0, 0);
 }
 
 /* Checked State */
 QToolButton:checked {
-    background-color: green;
+	background-color: rgb(70, 200, 100);
+	color: rgb(0, 0, 0);
 }</string>
     </property>
     <property name="text">
-     <string/>
+     <string>Validacion heatsink</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="btn_valid_pcb">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>320</y>
+      <width>270</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* Default (Unchecked) State */
+QToolButton {
+	background-color: rgb(47, 47, 47);
+	color: rgb(0, 0, 0);
+}
+
+/* Checked State */
+QToolButton:checked {
+	background-color: rgb(70, 200, 100);
+	color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>Validacion PCBs</string>
     </property>
    </widget>
   </widget>
