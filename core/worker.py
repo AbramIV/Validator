@@ -65,6 +65,8 @@ class Worker():
                 
                 if self.mistake == MistakeType.MoreThanOneTaken:
                     self.mistake = MistakeType.Nope
+            else:
+                self.message = "Instalar todos partes!"
         
         if self.shift.currentStep.type == StepType.Pick:
             self.scanCount = 0
@@ -266,6 +268,7 @@ class Worker():
             if self.reset_count >= self.reset_interval:
                 self.clear()
                 self.mistake = MistakeType.Nope
+                self.shift.step(StepType.Insert)
                 self.mistake_msg = ""
                 self.message = "Sistema reiniciado.\nSuelte el boton!"
                 return True
