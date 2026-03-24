@@ -12,9 +12,7 @@ DEVICE_DESCRIPTION = "USB-5860,BID#0"
 PROFILE_PATH = u"../../profile/USB-5860.xml"
 
 class Worker():
-    def __init__(self, arguments):
-        self.logger = logging.getLogger("__main__")
-        
+    def __init__(self, arguments):  
         self.ip_api = arguments[AppArguments.IP_VALIDATE.value]
 
         self.scanner = Scanner()
@@ -47,7 +45,7 @@ class Worker():
             self.device = USB5860(DEVICE_DESCRIPTION, PROFILE_PATH)
         except Exception as ex:
             self.error = False
-            self.logger.error("Advantech USB-5860 init error: " + str(ex))
+            logging.error("Advantech USB-5860 init error: " + str(ex))
             self.message = "Advantech USB-5860 init error!"
         
         self.scanner_thread = threading.Thread(target=self.scanner.scan, daemon=True)
@@ -137,7 +135,7 @@ class Worker():
                         self.reprint = True
                         self.validateCount += 1      
                     else:
-                        self.logger.warning(python_object[self.client.api1.message])
+                        logging.warning(python_object[self.client.api1.message])
                         if self.sensors_sum == 0:
                             self.message = python_object[self.client.api1.message] + "\nInstalar todos partes."
                             self.shift.save()
@@ -147,7 +145,7 @@ class Worker():
                             self.message = python_object[self.client.api1.message] + "\nElige uno parte."            
             else:
                 if self.is_position_valid():
-                    self.logger.error(self.client.message)                    
+                    logging.error(self.client.message)                    
                     if self.sensors_sum == 0:
                         self.shift.save()
                         self.message = "HTTP pedido error!\nContactar con soporte O\ninstalar todos para continuar!"
@@ -180,11 +178,11 @@ class Worker():
                 self.scanner.reset()
 
         if self.shift.currentStep.type == StepType.Print:
-            if (self.printer.print(self.zpl)):
+            if self.printer.print(self.zpl):
                 self.message = "Escanear el codigo impreso!\nSi la pegatina está dañada, pulse el botón para volver a imprimirla."
                 Shift.step(StepType.Scan_Heatsink)
             else:
-                self.logger.error(self.printer.message)
+                logging.error(self.printer.message)
                 if self.sensors_sum == 0:
                     self.shift = Shift(StepType.Insert)
                     self.message = self.printer.message + " Instalar todos partes."
@@ -213,7 +211,7 @@ class Worker():
                             self.message = python_object[self.client.api2.message] + "\nNo valido! Elige uno parte." 
             else: 
                 if self.is_position_valid():
-                    self.logger.error(self.client.response)                    
+                    logging.error(self.client.response)                    
                     if self.sensors_sum == 0:
                         self.shift.save()
                         self.message = "HTTP pedido error!\nContactar con soporte O\ninstalar todos para continuar!"
@@ -247,13 +245,13 @@ class Worker():
 
             if self.error:
                 self.error = False
-                self.logger.error("Advantech USB-5860 conexion ha sido restaurada.")
+                logging.error("Advantech USB-5860 conexion ha sido restaurada.")
         except Exception as ex:
             self.clear()
             if not self.error:
                 self.error = True
                 self.message = "Advantech USB-5860 encuesta error!"
-                self.logger.error("Advantech USB-5860 request error: " + str(ex))
+                logging.error("Advantech USB-5860 request error: " + str(ex))
             if self.device.isDisposed:
                 self.device = USB5860("USB-5860,BID#0", u"../../profile/USB-5860.xml")
             return False
@@ -276,7 +274,7 @@ class Worker():
                 self.last_message = self.message
             self.reset_count += 1
             self.message = f"Reiniciando el sistema\nNo suelte el botón... {self.reset_interval-self.reset_count}"
-            self.logger.warning(f"Botón de reinicio presionado: {self.reset_interval-self.reset_count}.")
+            logging.warning(f"Botón de reinicio presionado: {self.reset_interval-self.reset_count}.")
             return True
         else:
             if self.reset_count > 0:

@@ -1,3 +1,4 @@
+import logging
 import socket
 import sys, os
 import time
@@ -138,12 +139,16 @@ class Printer():
         success = False
         try:
             self.my_socket.connect((self.ip, self.port))
+            logging.debug(f"Connected to printer at {self.ip}:{self.port}")
             self.my_socket.send(zpl.encode('utf-8'))
+            logging.debug(f"Sent ZPL data to printer: {zpl}")
             success = True
         except socket.error as ex:
             self.message = f"Error with socket connection: {ex}"
+            logging.error(f"Error with socket connection: {ex}")
         except Exception as ex:
             self.message = f"An unexpected error occurred: {ex}"
+            logging.error(f"An unexpected error occurred: {ex}")
         finally:
             self.my_socket.close()
         return success
