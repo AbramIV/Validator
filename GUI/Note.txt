@@ -1,1 +1,1 @@
-C:\Users\igorabramov\AppData\Local\Python\pythoncore-3.14-64\Scripts\pyuic6 C:\Main\Repositories\Validator\GUI\Qt.ui -o C:\Main\Repositories\Validator\GUI\Qt.py
+C:\Users\igorabramov\AppData\Local\Python\pythoncore-3.14-64\Scripts\pyuic6 C:\Main\Repositories\Validator\gui\Qt.ui -o C:\Main\Repositories\Validator\gui\Qt.py
