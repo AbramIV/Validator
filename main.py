@@ -16,6 +16,7 @@ def load_config():
     int(config['printer']['port'])
     int(config['system']['reset_interval'])
     int(config['system']['http_timeout'])
+    int(config['system']['blink_frequency_divider'])
     
     if int(config['printer']['port']) < 1 or int(config['printer']['port']) > 65535:
         raise ValueError("Port number out of valid range (1-65535): %s", config['printer']['port'])
@@ -28,6 +29,9 @@ def load_config():
     
     if int(config['system']['http_timeout']) < 1 or int(config['system']['http_timeout']) > 10:
         raise ValueError("HTTP timeout out of valid range (1-10): %s", config['system']['http_timeout'])
+
+    if int(config['system']['blink_frequency_divider']) < 0 or int(config['system']['blink_frequency_divider']) > 10:
+        raise ValueError("Blink frequency divider out of valid range (0-10): %s", config['system']['blink_frequency_divider'])
 
     return config
 
@@ -42,6 +46,4 @@ if __name__ == '__main__':
     except Exception as ex:
         logging.fatal("Unhandled exception: " + str(ex))
     finally:
-        logging.info("Application closed.")  
-
- 
+        logging.info("Application closed.")

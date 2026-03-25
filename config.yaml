@@ -9,3 +9,4 @@
 "system": 
     "reset_interval": 15
     "http_timeout": 5
+    "blink_frequency_divider": 2

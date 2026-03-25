@@ -6,13 +6,15 @@ from core.worker import Worker
 from qt import styles
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    def __init__(self, arguments, *args, obj=None, **kwargs):
+    def __init__(self, config, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
         self.msg_mistake.hide()
         
-        self.worker = Worker(arguments)
-        
+        self.worker = Worker(config)
+        self.blink_count = 0
+        self.blink_frq_divider = config["system"]["blink_frequency_divider"]
+
         self.timer = QTimer()
         self.timer.setInterval(200)
         self.timer.timeout.connect(self.cycle)
@@ -56,11 +58,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             else:
                 self.msg_tip.setStyleSheet(styles.MESSAGE[styles.BLUE])
 
-        self.btn_insert.setChecked(not self.btn_insert.isChecked() and self.worker.shift.currentStep.type == StepType.Insert and not self.worker.error)
-        self.btn_pick.setChecked(not self.btn_pick.isChecked() and self.worker.shift.currentStep.type == StepType.Pick and not self.worker.error)
-        self.btn_scan_pcb_1.setChecked(not self.btn_scan_pcb_1.isChecked() and self.worker.shift.currentStep.type == StepType.Scan_PCB_1 and not self.worker.error)
-        self.btn_scan_pcb_2.setChecked(not self.btn_scan_pcb_2.isChecked() and self.worker.shift.currentStep.type == StepType.Scan_PCB_2 and not self.worker.error)
-        self.btn_valid_pcb.setChecked(not self.btn_valid_pcb.isChecked() and self.worker.shift.currentStep.type == StepType.Valid_PCB and not self.worker.error)
-        self.btn_print.setChecked(not self.btn_print.isChecked() and self.worker.shift.currentStep.type == StepType.Print and not self.worker.error)
-        self.btn_scan_heatsink.setChecked(not self.btn_scan_heatsink.isChecked() and self.worker.shift.currentStep.type == StepType.Scan_Heatsink and not self.worker.error)
-        self.btn_valid_heatsink.setChecked(not self.btn_valid_heatsink.isChecked() and self.worker.shift.currentStep.type == StepType.Valid_Heatsink and not self.worker.error)
+        if self.blink_count >= self.blink_frq_divider:
+            self.btn_insert.setChecked(not self.btn_insert.isChecked() and self.worker.shift.currentStep.type == StepType.Insert and not self.worker.error)
+            self.btn_pick.setChecked(not self.btn_pick.isChecked() and self.worker.shift.currentStep.type == StepType.Pick and not self.worker.error)
+            self.btn_scan_pcb_1.setChecked(not self.btn_scan_pcb_1.isChecked() and self.worker.shift.currentStep.type == StepType.Scan_PCB_1 and not self.worker.error)
+            self.btn_scan_pcb_2.setChecked(not self.btn_scan_pcb_2.isChecked() and self.worker.shift.currentStep.type == StepType.Scan_PCB_2 and not self.worker.error)
+            self.btn_valid_pcb.setChecked(not self.btn_valid_pcb.isChecked() and self.worker.shift.currentStep.type == StepType.Valid_PCB and not self.worker.error)
+            self.btn_print.setChecked(not self.btn_print.isChecked() and self.worker.shift.currentStep.type == StepType.Print and not self.worker.error)
+            self.btn_scan_heatsink.setChecked(not self.btn_scan_heatsink.isChecked() and self.worker.shift.currentStep.type == StepType.Scan_Heatsink and not self.worker.error)
+            self.btn_valid_heatsink.setChecked(not self.btn_valid_heatsink.isChecked() and self.worker.shift.currentStep.type == StepType.Valid_Heatsink and not self.worker.error)
+            self.blink_count = 0
+        else:
+            self.blink_count += 1
