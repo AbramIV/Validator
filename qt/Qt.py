@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'C:\Main\Repositories\Validator\GUI\Qt.ui'
+# Form implementation generated from reading ui file 'C:\Main\Repositories\ZKW_Validator\qt\Qt.ui'
 #
 # Created by: PyQt6 UI code generator 6.10.0
 #
@@ -10,7 +10,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow: QtWidgets.QMainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.WindowModality.NonModal)
         MainWindow.setEnabled(True)
@@ -21,7 +21,7 @@ class Ui_MainWindow(object):
         MainWindow.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.DefaultContextMenu)
         MainWindow.setAcceptDrops(False)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("C:\\Main\\Repositories\\Validator\\GUI\\icons/icon.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap("C:\\Main\\Repositories\\ZKW_Validator\\qt\\icons/icon.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet("background-color: rgb(80, 80, 80);")
         MainWindow.setInputMethodHints(QtCore.Qt.InputMethodHint.ImhNone)

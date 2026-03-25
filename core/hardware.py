@@ -1,14 +1,12 @@
 import logging
 import socket
 import sys, os
-import time
+from zebra import Zebra
 from Automation.BDaq import *
 from Automation.BDaq.InstantDiCtrl import InstantDiCtrl
 from Automation.BDaq.InstantDoCtrl import InstantDoCtrl
 from Automation.BDaq.BDaqApi import AdxEnumToString, BioFailed
 from pynput.keyboard import Key, Listener
-
-from core.enums import PrinterCommand, PrinterStatus
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
 class USB5860():
@@ -128,57 +126,65 @@ class Scanner():
         self.buffer.clear()
 
 class Printer():
-    def __init__(self):
+    def __init__(self, print_trials = 3):
+        self.name = ""
         self.ip = ""
         self.port = 0
-        self.message = ""
-        self.status = PrinterStatus.Normal
-        self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.error = ""
+        self.trial = 0
+        self.max_trials = print_trials
 
-    def print(self, zpl: str):
-        success = False
+    def print_via_ethernet(self, ip, port, zpl: str):
+        my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.trial += 1
+
         try:
-            self.my_socket.connect((self.ip, self.port))
-            logging.debug(f"Connected to printer at {self.ip}:{self.port}")
-            self.my_socket.send(zpl.encode('utf-8'))
+            logging.debug(f"Connecting to printer at {ip}:{port}")
+            my_socket.connect((ip, port))
             logging.debug(f"Sent ZPL data to printer: {zpl}")
-            success = True
+            my_socket.send(zpl.encode('utf-8'))
+            self.trial = 0
+            return True
         except socket.error as ex:
-            self.message = f"Error with socket connection: {ex}"
-            logging.error(f"Error with socket connection: {ex}")
+            message = f"Error with socket connection: {ex}"
+            logging.error(message)
         except Exception as ex:
-            self.message = f"An unexpected error occurred: {ex}"
-            logging.error(f"An unexpected error occurred: {ex}")
+            message = f"An unexpected error occurred: {ex}"
+            logging.error(message)
         finally:
-            self.my_socket.close()
-        return success
+            my_socket.close()
 
-    def get_status(self):
-        status = PrinterStatus.Nope
+        if self.trials >= self.max_trials:
+            logging.error(f"Maximum print attempts reached ({self.max_trials}).")
+            self.trials = 0  # Reset trials after reaching the limit
+            return False
+
+        return self.print_via_ethernet(ip, port, zpl)  # Retry printing
+    
+    def print_via_usb(self, printer: str, zpl: str):
+        zebra = Zebra()
+        self.trial += 1
+
         try:
-            self.my_socket.connect((self.ip, self.port))
-            self.my_socket.send("\x1B!?".encode('utf-8'))
-            response = self.my_socket.recv(1) #recv(1024).decode('utf-8')
-            #status = PrinterStatus(hex(int(response)))
-            print(f"Received response: {response}")
+            logging.debug(f"Sending ZPL data to {printer} via USB: {zpl}")
+            if printer not in zebra.getqueues():
+                logging.error(f"Printer '{printer}' not found in available queues: {zebra.getqueues()}")
+                raise ValueError(f"Printer '{printer}' not found in available queues: {zebra.getqueues()}")
+            zebra.setqueue(printer)
+            zebra.output(zpl)
+            self.trial = 0
+            return True
         except Exception as ex:
-            print(str(ex))
-            status = PrinterStatus.RequestError
-        finally:
-            self.my_socket.close()
-        return status
+            message = f"An error occurred while printing trial {self.trial} via USB: {ex}"
+            logging.error(message)
 
+        if self.trials >= self.max_trials:
+            logging.error(f"Maximum print attempts reached ({self.max_trials}).")
+            self.trials = 0  # Reset trials after reaching the limit
+            return False
+
+        return self.print_via_usb(printer, zpl)  # Retry printing
+        
     def reset(self):
-        try:
-            self.my_socket.connect((self.ip, self.port))
-            self.my_socket.sendall(str(PrinterCommand.Reset).encode('utf-8'))
-        except:
-            print("reset printer error")
-        finally:
-            self.my_socket.close()
-
-    def set_ip(self, ip):
-        self.ip = ip
-
-    def set_port(self, port):
-        self.port = port
+        self.trial = 0
+        self.error = ""

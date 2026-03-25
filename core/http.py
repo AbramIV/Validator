@@ -46,8 +46,6 @@ class HttpClient():
 
 class API1_KEY():
         result = "Result"
-        ip = "Ip"
-        port = "Port"
         zpl = "Zpl"
         heatsink = "Heatsink"
         pcb1 = "PCB1"

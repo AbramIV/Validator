@@ -1,0 +1,11 @@
+"api": 
+    "ip": "192.168.3.31"
+
+"printer": 
+    "ip": "130.13.1.0"
+    "port": 9100
+    "name": "ZDesigner ZD421-300dpi ZPL (Copiar 1)"
+
+"system": 
+    "reset_interval": 15
+    "http_timeout": 5

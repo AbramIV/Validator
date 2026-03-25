@@ -1,5 +1,5 @@
 import logging
-from core.enums import AppArguments, Input, MistakeType, Output, PrinterStatus, StepType
+from core.enums import Input, MistakeType, Output, StepType
 from core.hardware import USB5860, Printer, Scanner
 from core.http import HttpClient
 from core.production import Shift
@@ -12,19 +12,22 @@ DEVICE_DESCRIPTION = "USB-5860,BID#0"
 PROFILE_PATH = u"../../profile/USB-5860.xml"
 
 class Worker():
-    def __init__(self, arguments):  
-        self.ip_api = arguments[AppArguments.IP_VALIDATE.value]
-
+    def __init__(self, config):  
         self.scanner = Scanner()
         self.printer = Printer()
-        self.client = HttpClient(3)
+        self.client = HttpClient(config["system"]["http_timeout"])
         self.shift = Shift(StepType.Insert)
         
+        self.printer.ip = config["printer"]["ip"]
+        self.printer.port = config["printer"]["port"]
+        self.printer.name = config["printer"]["name"]
+
+        self.ip = config["api"]["ip"]
         self.input = [0, 0, 0, 0, 0, 0, 0, 0]
         self.last_input = self.input
         self.sensors_sum = 0
         self.sensors_last_sum = 0
-        self.reset_interval = int(arguments[AppArguments.RESET_INTERVAL.value])
+        self.reset_interval = config["system"]["reset_interval"]
         self.reset_count = 0
         self.reset_delay = 0
         self.output = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -127,8 +130,6 @@ class Worker():
                 if self.is_position_valid():
                     python_object = json.loads(self.client.response)
                     if python_object[self.client.api1.result] == "true":
-                        self.printer.set_ip(python_object[self.client.api1.ip])
-                        self.printer.set_port(int(python_object[self.client.api1.port]))
                         self.zpl = python_object[self.client.api1.zpl]
                         self.message = "Impresion..."
                         self.shift.step(StepType.Print)
@@ -178,17 +179,18 @@ class Worker():
                 self.scanner.reset()
 
         if self.shift.currentStep.type == StepType.Print:
-            if self.printer.print(self.zpl):
+            if self.printer.print_via_usb(self.printer_name, self.zpl):
                 self.message = "Escanear el codigo impreso!\nSi la pegatina está dañada, pulse el botón para volver a imprimirla."
                 Shift.step(StepType.Scan_Heatsink)
             else:
-                logging.error(self.printer.message)
+                logging.error(self.printer.error)
                 if self.sensors_sum == 0:
                     self.shift = Shift(StepType.Insert)
-                    self.message = self.printer.message + " Instalar todos partes."
+                    self.message = self.printer.error + " Instalar todos partes."
                 else: 
                     self.shift = Shift(StepType.Pick)
-                    self.message = self.printer.message + " Elige uno parte!"
+                    self.message = self.printer.error + " Elige uno parte!"
+                self.printer.reset()
         
         if self.shift.currentStep.type == StepType.Valid_Heatsink:
             if self.client.get(self.url):
@@ -220,7 +222,7 @@ class Worker():
                         self.message = "HTTP pedido error!\nContactar con soporte O\nelige uno parte para continuar!"
                         self.shift = Shift(StepType.Pick)
                 
-        self.last_input = self.input # save current DIO state for the next poll
+        self.last_input = self.input
 
     def is_position_valid(self):
         if self.sensors_last_sum != self.sensors_sum:

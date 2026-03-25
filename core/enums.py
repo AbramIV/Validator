@@ -37,33 +37,3 @@ class MistakeType(Enum):
     AddedAfterStart = 2
     CodeScannedTwice = 3
     PrintedCodeInvalid = 4
-
-class AppArguments(Enum):
-    IP_VALIDATE = 0
-    IP_PRINTER = 1
-    PORT_PRINTER = 2
-    RESET_INTERVAL = 3
-    Nope = 4
-    
-class PrinterStatus(Enum):
-    Normal = 0x00
-    HeadOpened = 0x01
-    PaperJam = 0x02
-    PaperJamAndHeadOpened = 0x03
-    OutOfPaper = 0x04
-    OutOfPaperAndHeadOpened = 0x05
-    OutOfRibbon = 0x08
-    OutOfRibbonAndHeadOpened = 0x09
-    OutOfRibbonAndPaperJam = 0x0A
-    OutOfRibbonPaperJamAndHeadOpened = 0x0B 
-    OutOfRibbonAndOutOfPaper = 0x0C
-    OutOfRibbonOutOfPaperAndHeadOpened = 0x0D
-    Pause = 0x10
-    Printing = 0x20
-    OtherError = 0x80
-    RequestError = 0x110
-    Nope = 0x120
-
-class PrinterCommand(Enum):
-    Reset = "\x1B!C"
-    Status = "\x1B!?"

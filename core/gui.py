@@ -1,9 +1,9 @@
 from PyQt6.QtWidgets import QMainWindow
-from gui.Qt import Ui_MainWindow
+from qt.Qt import Ui_MainWindow
 from PyQt6.QtCore import QTimer
 from core.enums import Input, MistakeType, StepType
 from core.worker import Worker
-from gui import styles
+from qt import styles
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, arguments, *args, obj=None, **kwargs):
