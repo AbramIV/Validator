@@ -119,7 +119,7 @@ class Worker():
                     self.mistake = MistakeType.CodeScannedTwice
                     self.mistake_msg = "Escaneaste lo mismo!\nEscanea el segundo codigo QR!"
                 else:
-                    self.url = f"http://{self.ip_api}/apiDB/api/getHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&side={self.side}"
+                    self.url = f"http://{self.ip}/apiDB/api/getHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&side={self.side}"
                     self.mistake = MistakeType.Nope
                     self.shift.step(StepType.Valid_PCB)
                     self.message = "Validacion, espera..."
@@ -172,7 +172,7 @@ class Worker():
                     self.mistake_msg = "El código escaneado está no correcto!\nEscanea el codigo impreso!"
                 else:
                     self.scanCount = 0
-                    self.url = f"http://{self.ip_api}/apiDB/api/validateHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&heat={self.heatsink}&side={self.side}"
+                    self.url = f"http://{self.ip}/apiDB/api/validateHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&heat={self.heatsink}&side={self.side}"
                     self.mistake = MistakeType.Nope
                     self.shift.step(StepType.Valid_Heatsink)
                     self.message = "Validacion, espera..."

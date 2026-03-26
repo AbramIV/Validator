@@ -154,9 +154,9 @@ class Printer():
         finally:
             my_socket.close()
 
-        if self.trials >= self.max_trials:
+        if self.trial >= self.max_trials:
             logging.error(f"Maximum print attempts reached ({self.max_trials}).")
-            self.trials = 0  # Reset trials after reaching the limit
+            self.trial = 0  # Reset trial after reaching the limit
             return False
 
         return self.print_via_ethernet(ip, port, zpl)  # Retry printing
