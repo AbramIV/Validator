@@ -134,14 +134,14 @@ class Printer():
         self.trial = 0
         self.max_trials = print_trials
 
-    def print_via_ethernet(self, ip, port, zpl: str):
+    def print_via_ethernet(self, zpl: str):
         my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.trial += 1
 
         try:
-            logging.debug(f"Connecting to printer at {ip}:{port}")
-            my_socket.connect((ip, port))
-            logging.debug(f"Sent ZPL data to printer: {zpl}")
+            logging.debug(f"Connecting to printer at {self.ip}:{self.port}")
+            my_socket.connect((self.ip, self.port))
+            logging.debug(f"Sent ZPL data to printer via Ethernet.")
             my_socket.send(zpl.encode('utf-8'))
             self.trial = 0
             return True
@@ -159,18 +159,18 @@ class Printer():
             self.trial = 0  # Reset trial after reaching the limit
             return False
 
-        return self.print_via_ethernet(ip, port, zpl)  # Retry printing
+        return self.print_via_ethernet(zpl)  # Retry printing
     
-    def print_via_usb(self, printer: str, zpl: str):
+    def print_via_usb(self, zpl: str):
         zebra = Zebra()
         self.trial += 1
 
         try:
-            logging.debug(f"Sending ZPL data to {printer} via USB: {zpl}")
-            if printer not in zebra.getqueues():
-                logging.error(f"Printer '{printer}' not found in available queues: {zebra.getqueues()}")
-                raise ValueError(f"Printer '{printer}' not found in available queues: {zebra.getqueues()}")
-            zebra.setqueue(printer)
+            logging.debug(f"Sending ZPL data to {self.name} via USB.")
+            if self.name not in zebra.getqueues():
+                logging.error(f"Printer '{self.name}' not found in available queues: {zebra.getqueues()}")
+                raise ValueError(f"Printer '{self.name}' not found in available queues: {zebra.getqueues()}")
+            zebra.setqueue(self.name)
             zebra.output(zpl)
             self.trial = 0
             return True
@@ -183,7 +183,7 @@ class Printer():
             self.trials = 0  # Reset trials after reaching the limit
             return False
 
-        return self.print_via_usb(printer, zpl)  # Retry printing
+        return self.print_via_usb(zpl)  # Retry printing
         
     def reset(self):
         self.trial = 0

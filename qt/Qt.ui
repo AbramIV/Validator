@@ -47,7 +47,7 @@
    <widget class="QLabel" name="label_LH1">
     <property name="geometry">
      <rect>
-      <x>640</x>
+      <x>285</x>
       <y>28</y>
       <width>350</width>
       <height>100</height>
@@ -74,7 +74,7 @@
    <widget class="QLabel" name="lable_RH1">
     <property name="geometry">
      <rect>
-      <x>285</x>
+      <x>640</x>
       <y>28</y>
       <width>350</width>
       <height>100</height>
@@ -104,7 +104,7 @@
    <widget class="QLabel" name="label_LH2">
     <property name="geometry">
      <rect>
-      <x>640</x>
+      <x>285</x>
       <y>133</y>
       <width>350</width>
       <height>100</height>
@@ -131,7 +131,7 @@
    <widget class="QLabel" name="label_RH2">
     <property name="geometry">
      <rect>
-      <x>285</x>
+      <x>640</x>
       <y>133</y>
       <width>350</width>
       <height>100</height>

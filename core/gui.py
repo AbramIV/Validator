@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QMainWindow
 from qt.Qt import Ui_MainWindow
 from PyQt6.QtCore import QTimer
-from core.enums import Input, MistakeType, StepType
+from core.enums import AssociationStatus, Input, MistakeType, StepType
 from core.worker import Worker
 from qt import styles
 
@@ -40,7 +40,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.label_PCB1.setText(self.worker.pcb1)
         self.label_PCB2.setText(self.worker.pcb2)
-        self.label_heat.setText(self.worker.heatsink)
+        self.label_heat.setText(self.worker.heatsink_printed)
 
         if self.worker.mistake.value and not self.worker.reset_count and not (self.worker.error or self.worker.client.error):
             if self.worker.mistake in (MistakeType.AddedAfterStart, MistakeType.MoreThanOneTaken):
@@ -53,8 +53,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.msg_mistake.hide()
             if self.worker.reset_count:
                 self.msg_tip.setStyleSheet(styles.MESSAGE[styles.YELLOW])
-            elif self.worker.error or self.worker.client.error:
+            elif self.worker.error or self.worker.client.error or self.worker.association == AssociationStatus.HeatsinkNotAssociated:
                 self.msg_tip.setStyleSheet(styles.MESSAGE[styles.RED])
+            elif self.worker.association == AssociationStatus.HeatsinkAssociated:
+                self.msg_tip.setStyleSheet(styles.MESSAGE[styles.GREEN])
             else:
                 self.msg_tip.setStyleSheet(styles.MESSAGE[styles.BLUE])
 

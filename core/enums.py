@@ -37,3 +37,8 @@ class MistakeType(Enum):
     AddedAfterStart = 2
     CodeScannedTwice = 3
     PrintedCodeInvalid = 4
+
+class AssociationStatus(Enum):
+    Nope = 0
+    HeatsinkAssociated = 1
+    HeatsinkNotAssociated = 2

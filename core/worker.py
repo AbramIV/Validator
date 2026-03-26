@@ -1,5 +1,5 @@
 import logging
-from core.enums import Input, MistakeType, Output, StepType
+from core.enums import AssociationStatus, Input, MistakeType, Output, StepType
 from core.hardware import USB5860, Printer, Scanner
 from core.http import HttpClient
 from core.production import Shift
@@ -41,8 +41,9 @@ class Worker():
         self.side = ""
         self.url = ""
         self.zpl = ""
-        self.mistake = MistakeType.Nope
         self.error = False
+        self.mistake = MistakeType.Nope
+        self.association = AssociationStatus.Nope
 
         try:
             self.device = USB5860(DEVICE_DESCRIPTION, PROFILE_PATH)
@@ -74,9 +75,10 @@ class Worker():
             self.validateCount = 0
             self.pcb1 = ""
             self.pcb2 = ""
-            self.heatsink = ""
+            self.heatsink_printed = ""
             if self.sensors_last_sum != self.sensors_sum:
                 self.mistake = MistakeType.Nope
+                self.association = AssociationStatus.Nope
                 self.client.reset()
                 if  self.sensors_sum > self.sensors_last_sum: 
                     self.mistake = MistakeType.AddedAfterStart
@@ -129,12 +131,19 @@ class Worker():
             if self.client.get(self.url): 
                 if self.is_position_valid():
                     python_object = json.loads(self.client.response)
-                    if python_object[self.client.api1.result] == "true":
-                        self.zpl = python_object[self.client.api1.zpl]
+                    if python_object[self.client.api1.result] == "true" or "ya existen" in python_object[self.client.api1.message]:
+                        
+                        if "ya existen" in python_object[self.client.api1.message]:
+                            serial = str(python_object[self.client.api1.message]).split()[-1]
+                            self.heatsink = serial
+                            self.zpl = f"^XA\r\n^MMT\r\n^PW472\r\n^LL0354\r\n^LS0\r\n^FT32,149^A0N,49,50^FH\\^FD20260313^FS\r\n^FT113,303^A0N,50,50^FH\\^FD12:39^FS\r\n^FO258,117^GB189,189,5^FS\r\n^FT28,73^A0N,58,64^FH\\^FD1144.006.0630^FS\r\n^FT32,305^A0N,50,50^FH\\^FD00^FS\r\n^FT32,225^A0N,42,40^FH\\^FD0000000005^FS\r\n^BY144,144^FT282,285^BXN,8,200,18,18,1,~\r\n^FH\\^FD{serial}^FS\r\n^PQ1,0,1,Y^XZ"
+                        else:
+                            self.zpl = python_object[self.client.api1.zpl]
+                            self.heatsink = python_object[self.client.api1.heatsink]
+                        
                         self.message = "Impresion..."
                         self.shift.step(StepType.Print)
                         self.reprint = True
-                        self.validateCount += 1      
                     else:
                         logging.warning(python_object[self.client.api1.message])
                         if self.sensors_sum == 0:
@@ -163,15 +172,14 @@ class Worker():
                 return
             
             if self.scanner.isScanned:
-                self.heatsink = "".join(self.scanner.buffer)
-                if self.heatsink in (self.pcb1, self.pcb2):
+                self.heatsink_printed = "".join(self.scanner.buffer)
+                if self.heatsink_printed in (self.pcb1, self.pcb2):
                     self.mistake = MistakeType.CodeScannedTwice
                     self.mistake_msg = "Escaneó el código de la pieza. ¡Escanee el código impreso!"
-                elif self.heatsink == self.heatsink_printed:
+                elif self.heatsink_printed != self.heatsink:
                     self.mistake = MistakeType.PrintedCodeInvalid
                     self.mistake_msg = "El código escaneado está no correcto!\nEscanea el codigo impreso!"
                 else:
-                    self.scanCount = 0
                     self.url = f"http://{self.ip}/apiDB/api/validateHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&heat={self.heatsink}&side={self.side}"
                     self.mistake = MistakeType.Nope
                     self.shift.step(StepType.Valid_Heatsink)
@@ -179,9 +187,9 @@ class Worker():
                 self.scanner.reset()
 
         if self.shift.currentStep.type == StepType.Print:
-            if self.printer.print_via_usb(self.printer_name, self.zpl):
+            if self.printer.print_via_usb(self.zpl):
                 self.message = "Escanear el codigo impreso!\nSi la pegatina está dañada, pulse el botón para volver a imprimirla."
-                Shift.step(StepType.Scan_Heatsink)
+                self.shift.step(StepType.Scan_Heatsink)
             else:
                 logging.error(self.printer.error)
                 if self.sensors_sum == 0:
@@ -196,21 +204,14 @@ class Worker():
             if self.client.get(self.url):
                 if self.is_position_valid():    
                     python_object = json.loads(self.client.response)
-                    if python_object[self.client.api2.result] == "true":
-                        if self.sensors_sum == 0: 
-                            self.shift = Shift(StepType.Insert)
-                            self.message = "Instalar todos partes."
-                        else: 
-                            self.shift = Shift(StepType.Pick)
-                            self.message = "Elige uno parte!"
+                    self.association = AssociationStatus.HeatsinkAssociated if python_object[self.client.api2.result] == "true" else AssociationStatus.HeatsinkNotAssociated
+                    if self.sensors_sum == 0: 
+                        self.shift = Shift(StepType.Insert)
+                        self.shift.save()
+                        self.message = python_object[self.client.api2.message] + "\nInstalar todos partes."
                     else:
-                        if self.sensors_sum == 0:
-                            self.message = python_object[self.client.api2.message] + "\nInstalar todos partes."
-                            self.shift.save()
-                            self.shift = Shift(StepType.Insert)
-                        else:
-                            self.shift = Shift(StepType.Pick)
-                            self.message = python_object[self.client.api2.message] + "\nNo valido! Elige uno parte." 
+                        self.shift = Shift(StepType.Pick)
+                        self.message = python_object[self.client.api2.message] + "\nElige uno parte!"
             else: 
                 if self.is_position_valid():
                     logging.error(self.client.response)                    
@@ -263,6 +264,7 @@ class Worker():
         if self.input[Input.Button.value]:
             if self.reset_delay < 15:
                 self.reset_delay += 1
+                if self.reset_delay == 1: return False
                 return True
         
             if self.reset_count >= self.reset_interval:
@@ -288,8 +290,6 @@ class Worker():
 
     def clear(self):
         self.sensors_last_sum = 0
-        self.scanCount = 0
-        self.validateCount = 0
         self.pcb1 = ""
         self.pcb2 = ""
         self.heatsink = ""
