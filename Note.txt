@@ -4,6 +4,6 @@
 C:\Users\igorabramov\AppData\Local\Python\pythoncore-3.14-64\Scripts\pyuic6 C:\Main\Repositories\ZKW_Validator\qt\Qt.ui -o C:\Main\Repositories\ZKW_Validator\qt\Qt.py
 
 .py -> .exe
-py -m PyInstaller -F -w main.py
+py -m PyInstaller -F -w ValidacionZKW.py
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------

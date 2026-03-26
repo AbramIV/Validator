@@ -62,13 +62,12 @@ class Worker():
             if self.sensors_sum == MAX_POSITIONS_COUNT:
                 self.client.reset()
                 self.shift.step(StepType.Pick)
+                logging.info("All inserted.")
                 self.sensors_last_sum = self.sensors_sum
                 self.message = "Elige uno parte!"
                 
                 if self.mistake == MistakeType.MoreThanOneTaken:
                     self.mistake = MistakeType.Nope
-            else:
-                self.message = "Instalar todos partes!"
         
         if self.shift.currentStep.type == StepType.Pick:
             self.scanCount = 0
@@ -83,6 +82,7 @@ class Worker():
                 if  self.sensors_sum > self.sensors_last_sum: 
                     self.mistake = MistakeType.AddedAfterStart
                     self.mistake_msg = "No devuelva las piezas!\nElige uno parte para continuar!"
+                    logging.warning("One added after start.")
                 if (self.sensors_last_sum - self.sensors_sum) == 1:   
                     if self.input[Input.RH1.value] != self.last_input[Input.RH1.value]:
                         self.message = "Esta parte de la izquierda!\n"
@@ -99,6 +99,7 @@ class Worker():
                     self.shift.step(StepType.Scan_PCB_1)
                     self.scanner.reset()
                     self.message += "Escanear el codigo 1!"
+                    logging.info(f"One extracted: {self.side}.")
                     self.sensors_last_sum = self.sensors_sum
                 else:
                     self.shift = Shift(StepType.Insert)
@@ -111,6 +112,7 @@ class Worker():
                 self.message = "Escanear el codigo 2!"
                 self.shift.step(StepType.Scan_PCB_2)
                 self.scanner.reset()
+                logging.info("PCB 1 scanned.")
 
         if self.shift.currentStep.type == StepType.Scan_PCB_2:
             if not self.is_position_valid(): return
@@ -120,11 +122,13 @@ class Worker():
                 if self.pcb1 == self.pcb2:
                     self.mistake = MistakeType.CodeScannedTwice
                     self.mistake_msg = "Escaneaste lo mismo!\nEscanea el segundo codigo QR!"
+                    logging.warning("Same PCB scanned twice.")
                 else:
                     self.url = f"http://{self.ip}/apiDB/api/getHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&side={self.side}"
                     self.mistake = MistakeType.Nope
                     self.shift.step(StepType.Valid_PCB)
                     self.message = "Validacion, espera..."
+                    logging.info("PCB 2 scanned.")
                 self.scanner.reset()
 
         if self.shift.currentStep.type == StepType.Valid_PCB:
@@ -169,6 +173,7 @@ class Worker():
 
             if self.input[Input.Button.value]:
                 self.shift.step(StepType.Print)
+                logging.warning("Reprint requested by button press.")
                 return
             
             if self.scanner.isScanned:
@@ -176,22 +181,26 @@ class Worker():
                 if self.heatsink_printed in (self.pcb1, self.pcb2):
                     self.mistake = MistakeType.CodeScannedTwice
                     self.mistake_msg = "Escaneó el código de la pieza. ¡Escanee el código impreso!"
+                    logging.warning("PCB code scanned instead of heatsink.")
                 elif self.heatsink_printed != self.heatsink:
                     self.mistake = MistakeType.PrintedCodeInvalid
                     self.mistake_msg = "El código escaneado está no correcto!\nEscanea el codigo impreso!"
+                    logging.warning("Printed code is not corresponding to expected heatsink.")
                 else:
                     self.url = f"http://{self.ip}/apiDB/api/validateHeatsink/?pcb1={self.pcb1}&pcb2={self.pcb2}&heat={self.heatsink}&side={self.side}"
                     self.mistake = MistakeType.Nope
                     self.shift.step(StepType.Valid_Heatsink)
                     self.message = "Validacion, espera..."
+                    logging.info("Heatsink scanned.")
                 self.scanner.reset()
 
         if self.shift.currentStep.type == StepType.Print:
             if self.printer.print_via_usb(self.zpl):
                 self.message = "Escanear el codigo impreso!\nSi la pegatina está dañada, pulse el botón para volver a imprimirla."
                 self.shift.step(StepType.Scan_Heatsink)
+                logging.info("Print requested.")
             else:
-                logging.error(self.printer.error)
+                logging.error(f"Print error: {self.printer.error}")
                 if self.sensors_sum == 0:
                     self.shift = Shift(StepType.Insert)
                     self.message = self.printer.error + " Instalar todos partes."
@@ -212,15 +221,15 @@ class Worker():
                     else:
                         self.shift = Shift(StepType.Pick)
                         self.message = python_object[self.client.api2.message] + "\nElige uno parte!"
+                    logging.info("Heatsink validation completed, result: " + python_object[self.client.api2.message])
             else: 
                 if self.is_position_valid():
-                    logging.error(self.client.response)                    
+                    logging.error(f"HTTP request error: {self.client.response}")
+                    self.message = "HTTP pedido error!\nContactar con soporte O\ninstalar todos para continuar!"
                     if self.sensors_sum == 0:
                         self.shift.save()
-                        self.message = "HTTP pedido error!\nContactar con soporte O\ninstalar todos para continuar!"
                         self.shift = Shift(StepType.Insert)
                     else:
-                        self.message = "HTTP pedido error!\nContactar con soporte O\nelige uno parte para continuar!"
                         self.shift = Shift(StepType.Pick)
                 
         self.last_input = self.input
@@ -230,12 +239,15 @@ class Worker():
             if self.sensors_last_sum > self.sensors_sum:
                 self.mistake = MistakeType.MoreThanOneTaken
                 self.mistake_msg = "No extraiga la pieza hasta que haya terminado el último proceso!\nInstalar todos partes para continuar!"
+                logging.warning("More than one taken.")
             else:
                 self.mistake = MistakeType.AddedAfterStart
                 if self.sensors_sum == MAX_POSITIONS_COUNT:
                     self.mistake_msg = "No agregue piezas después de comenzar el proceso!\nElige uno parte para continuar!"
+                    logging.warning("One added after start.")
                 else:
                     self.mistakeMsg = "No devuelva las piezas!\nInstalar todos partes para continuar!"
+                    logging.warning("One added after start.")
             self.clear()
             return False
         return True
@@ -299,4 +311,5 @@ class Worker():
         self.shift.save()
         self.scanner.reset()
         self.client.reset()
+        self.printer.reset()
         self.shift = Shift(StepType.Insert)
