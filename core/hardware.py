@@ -9,6 +9,8 @@ from Automation.BDaq.BDaqApi import AdxEnumToString, BioFailed
 from pynput.keyboard import Key, Listener
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
+ZPL_TEMPLATE = "^XA\r\n^MMT\r\n^PW472\r\n^LL0354\r\n^LS0\r\n^FT32,149^A0N,49,50^FH\\^FD20260313^FS\r\n^FT113,303^A0N,50,50^FH\\^FD12:39^FS\r\n^FO258,117^GB189,189,5^FS\r\n^FT28,73^A0N,58,64^FH\\^FD1144.006.0630^FS\r\n^FT32,305^A0N,50,50^FH\\^FD00^FS\r\n^FT32,225^A0N,42,40^FH\\^FD0000000005^FS\r\n^BY144,144^FT282,285^BXN,8,200,18,18,1,~\r\n^FH\\^FD1144.006.06300000000000058Q^FS\r\n^PQ1,0,1,Y^XZ"
+
 class USB5860():
     def __init__(self, deviceDescription, profilePath):
         self.isBusy = False
