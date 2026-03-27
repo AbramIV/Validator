@@ -303,6 +303,7 @@ class Ui_MainWindow(object):
 "    color: rgb(0, 0, 0);\n"
 "}")
         self.btn_valid_pcb.setObjectName("btn_valid_pcb")
+        self.btn_valid_pcb.setCheckable(True)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)

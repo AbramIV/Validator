@@ -19,7 +19,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.timer.setInterval(200)
         self.timer.timeout.connect(self.cycle)
         self.timer.start()
-        
         self.show()    
     
     def cycle(self):

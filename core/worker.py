@@ -1,7 +1,7 @@
 import logging
 from core.enums import AssociationStatus, Input, MistakeType, Output, StepType
 from core.hardware import USB5860, Printer, Scanner
-from core.http import HttpClient
+from core.http import API1_KEY, API2_KEY, HttpClient
 from core.production import Shift
 import threading
 import json
@@ -12,7 +12,7 @@ DEVICE_DESCRIPTION = "USB-5860,BID#0"
 PROFILE_PATH = u"../../profile/USB-5860.xml"
 
 class Worker():
-    def __init__(self, config):  
+    def __init__(self, config):
         self.scanner = Scanner()
         self.printer = Printer()
         self.client = HttpClient(config["system"]["http_timeout"])
@@ -38,6 +38,8 @@ class Worker():
         self.pcb2 = ""
         self.heatsink = ""
         self.heatsink_printed = ""
+        self.printing = False
+        self.print_delay = 0
         self.side = ""
         self.url = ""
         self.zpl = ""
@@ -52,8 +54,8 @@ class Worker():
             logging.error("Advantech USB-5860 init error: " + str(ex))
             self.message = "Advantech USB-5860 init error!"
         
-        self.scanner_thread = threading.Thread(target=self.scanner.scan, daemon=True)
-        self.scanner_thread.start()
+        scanner_thread = threading.Thread(target=self.scanner.scan, daemon=True)
+        scanner_thread.start()
 
     def work(self):
         if not self.poll() or self.reset(): return
@@ -132,31 +134,38 @@ class Worker():
                 self.scanner.reset()
 
         if self.shift.currentStep.type == StepType.Valid_PCB:
-            if self.client.get(self.url): 
+            if self.client.requesting: return
+
+            if not self.client.completed:
+                get_heatsink_thread = threading.Thread(target=self.client.get, args=[self.url], daemon=True)
+                get_heatsink_thread.start()
+                return
+
+            if not self.client.error:
                 if self.is_position_valid():
                     python_object = json.loads(self.client.response)
-                    if python_object[self.client.api1.result] == "true" or "ya existen" in python_object[self.client.api1.message]:
+                    if python_object[API1_KEY.result] == "true" or "ya existen" in python_object[API1_KEY.message]:
                         
-                        if "ya existen" in python_object[self.client.api1.message]:
-                            serial = str(python_object[self.client.api1.message]).split()[-1]
+                        if "ya existen" in python_object[API1_KEY.message]:
+                            serial = str(python_object[API1_KEY.message]).split()[-1]
                             self.heatsink = serial
                             self.zpl = f"^XA\r\n^MMT\r\n^PW472\r\n^LL0354\r\n^LS0\r\n^FT32,149^A0N,49,50^FH\\^FD20260313^FS\r\n^FT113,303^A0N,50,50^FH\\^FD12:39^FS\r\n^FO258,117^GB189,189,5^FS\r\n^FT28,73^A0N,58,64^FH\\^FD1144.006.0630^FS\r\n^FT32,305^A0N,50,50^FH\\^FD00^FS\r\n^FT32,225^A0N,42,40^FH\\^FD0000000005^FS\r\n^BY144,144^FT282,285^BXN,8,200,18,18,1,~\r\n^FH\\^FD{serial}^FS\r\n^PQ1,0,1,Y^XZ"
                         else:
-                            self.zpl = python_object[self.client.api1.zpl]
-                            self.heatsink = python_object[self.client.api1.heatsink]
+                            self.zpl = python_object[API1_KEY.zpl]
+                            self.heatsink = python_object[API1_KEY.heatsink]
                         
                         self.message = "Impresion..."
                         self.shift.step(StepType.Print)
                         self.reprint = True
                     else:
-                        logging.warning(python_object[self.client.api1.message])
+                        logging.warning(python_object[API1_KEY.message])
                         if self.sensors_sum == 0:
-                            self.message = python_object[self.client.api1.message] + "\nInstalar todos partes."
+                            self.message = python_object[API1_KEY.message] + "\nInstalar todos partes."
                             self.shift.save()
                             self.shift = Shift(StepType.Insert)
                         else:
                             self.shift = Shift(StepType.Pick)
-                            self.message = python_object[self.client.api1.message] + "\nElige uno parte."            
+                            self.message = python_object[API1_KEY.message] + "\nElige uno parte."            
             else:
                 if self.is_position_valid():
                     logging.error(self.client.message)                    
@@ -167,6 +176,7 @@ class Worker():
                     else:
                         self.message = "HTTP pedido error!\nContactar con soporte O\nelige uno parte para continuar!"
                         self.shift = Shift(StepType.Pick)
+            self.client.reset()
 
         if self.shift.currentStep.type == StepType.Scan_Heatsink:
             if not self.is_position_valid(): return
@@ -195,9 +205,19 @@ class Worker():
                 self.scanner.reset()
 
         if self.shift.currentStep.type == StepType.Print:
+            if self.printing and self.print_delay < 10:
+                self.print_delay += 1
+                return
+
+            if self.printing and self.print_delay >= 10:
+                self.printing = False
+                self.print_delay = 0
+                self.shift.step(StepType.Scan_Heatsink)
+                return                    
+
             if self.printer.print_via_usb(self.zpl):
                 self.message = "Escanear el codigo impreso!\nSi la pegatina está dañada, pulse el botón para volver a imprimirla."
-                self.shift.step(StepType.Scan_Heatsink)
+                self.printing = True
                 logging.info("Print requested.")
             else:
                 logging.error(f"Print error: {self.printer.error}")
@@ -210,18 +230,25 @@ class Worker():
                 self.printer.reset()
         
         if self.shift.currentStep.type == StepType.Valid_Heatsink:
-            if self.client.get(self.url):
+            if self.client.requesting: return
+
+            if not self.client.completed:
+                get_heatsink_thread = threading.Thread(target=self.client.get, args=[self.url], daemon=True)
+                get_heatsink_thread.start()
+                return
+
+            if not self.client.error:
                 if self.is_position_valid():    
                     python_object = json.loads(self.client.response)
-                    self.association = AssociationStatus.HeatsinkAssociated if python_object[self.client.api2.result] == "true" else AssociationStatus.HeatsinkNotAssociated
+                    self.association = AssociationStatus.HeatsinkAssociated if python_object[API2_KEY.result] == "true" else AssociationStatus.HeatsinkNotAssociated
                     if self.sensors_sum == 0: 
                         self.shift = Shift(StepType.Insert)
                         self.shift.save()
-                        self.message = python_object[self.client.api2.message] + "\nInstalar todos partes."
+                        self.message = python_object[API2_KEY.message] + "\nInstalar todos partes."
                     else:
                         self.shift = Shift(StepType.Pick)
-                        self.message = python_object[self.client.api2.message] + "\nElige uno parte!"
-                    logging.info("Heatsink validation completed, result: " + python_object[self.client.api2.message])
+                        self.message = python_object[API2_KEY.message] + "\nElige uno parte!"
+                    logging.info("Heatsink validation completed, result: " + python_object[API2_KEY.message])
             else: 
                 if self.is_position_valid():
                     logging.error(f"HTTP request error: {self.client.response}")
