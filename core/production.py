@@ -4,23 +4,23 @@ import queue
 from core.enums import StepType
 
 class Shift():
-    def __init__(self, firstStepType): 
+    def __init__(self, first_step_type): 
         self.date = datetime.now()
         self.steps = queue.Queue()
-        self.currentStep = Step(firstStepType)
-        self.lastStep = Step(StepType.Nope)
-        self.steps.put(self.currentStep)
+        self.current_step = Step(first_step_type)
+        self.last_step = Step(StepType.Nope)
+        self.steps.put(self.current_step)
     
-    def step(self, nextStepType):
-        self.currentStep.stop = datetime.now()
-        self.currentStep.duration = self.currentStep.stop - self.currentStep.start
-        self.lastStep = self.currentStep
-        self.currentStep = Step(nextStepType)
-        self.steps.put(self.currentStep)
+    def step(self, next_step_type):
+        self.current_step.stop = datetime.now()
+        self.current_step.duration = self.current_step.stop - self.current_step.start
+        self.last_step = self.current_step
+        self.current_step = Step(next_step_type)
+        self.steps.put(self.current_step)
         
     def save(self):
-        self.currentStep.stop = datetime.now()
-        self.currentStep.duration = self.currentStep.stop - self.currentStep.start
+        self.current_step.stop = datetime.now()
+        self.current_step.duration = self.current_step.stop - self.current_step.start
         # serialize and save or send to somewhere
 
 class Step():

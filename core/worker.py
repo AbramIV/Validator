@@ -60,7 +60,7 @@ class Worker():
     def work(self):
         if not self.poll() or self.reset(): return
         
-        if self.shift.currentStep.type == StepType.Insert:
+        if self.shift.current_step.type == StepType.Insert:
             if self.sensors_sum == MAX_POSITIONS_COUNT:
                 self.client.reset()
                 self.shift.step(StepType.Pick)
@@ -71,7 +71,7 @@ class Worker():
                 if self.mistake == MistakeType.MoreThanOneTaken:
                     self.mistake = MistakeType.Nope
         
-        if self.shift.currentStep.type == StepType.Pick:
+        if self.shift.current_step.type == StepType.Pick:
             self.scanCount = 0
             self.validateCount = 0
             self.pcb1 = ""
@@ -106,7 +106,7 @@ class Worker():
                 else:
                     self.shift = Shift(StepType.Insert)
                     
-        if self.shift.currentStep.type == StepType.Scan_PCB_1:
+        if self.shift.current_step.type == StepType.Scan_PCB_1:
             if not self.is_position_valid(): return
 
             if self.scanner.isScanned:
@@ -116,7 +116,7 @@ class Worker():
                 self.scanner.reset()
                 logging.info("PCB 1 scanned.")
 
-        if self.shift.currentStep.type == StepType.Scan_PCB_2:
+        if self.shift.current_step.type == StepType.Scan_PCB_2:
             if not self.is_position_valid(): return
 
             if self.scanner.isScanned:
@@ -133,7 +133,7 @@ class Worker():
                     logging.info("PCB 2 scanned.")
                 self.scanner.reset()
 
-        if self.shift.currentStep.type == StepType.Valid_PCB:
+        if self.shift.current_step.type == StepType.Valid_PCB:
             if self.client.requesting: return
 
             if not self.client.completed:
@@ -178,7 +178,7 @@ class Worker():
                         self.shift = Shift(StepType.Pick)
             self.client.reset()
 
-        if self.shift.currentStep.type == StepType.Scan_Heatsink:
+        if self.shift.current_step.type == StepType.Scan_Heatsink:
             if not self.is_position_valid(): return
 
             if self.input[Input.Button.value]:
@@ -204,7 +204,7 @@ class Worker():
                     logging.info("Heatsink scanned.")
                 self.scanner.reset()
 
-        if self.shift.currentStep.type == StepType.Print:
+        if self.shift.current_step.type == StepType.Print:
             if self.printing and self.print_delay < 10:
                 self.print_delay += 1
                 return
@@ -229,7 +229,7 @@ class Worker():
                     self.message = self.printer.error + " Elige uno parte!"
                 self.printer.reset()
         
-        if self.shift.currentStep.type == StepType.Valid_Heatsink:
+        if self.shift.current_step.type == StepType.Valid_Heatsink:
             if self.client.requesting: return
 
             if not self.client.completed:
@@ -273,7 +273,7 @@ class Worker():
                     self.mistake_msg = "No agregue piezas después de comenzar el proceso!\nElige uno parte para continuar!"
                     logging.warning("One added after start.")
                 else:
-                    self.mistakeMsg = "No devuelva las piezas!\nInstalar todos partes para continuar!"
+                    self.mistake_msg = "No devuelva las piezas!\nInstalar todos partes para continuar!"
                     logging.warning("One added after start.")
             self.clear()
             return False
@@ -309,6 +309,7 @@ class Worker():
             if self.reset_count >= self.reset_interval:
                 self.clear()
                 self.mistake = MistakeType.Nope
+                self.association = AssociationStatus.Nope
                 self.shift.step(StepType.Insert)
                 self.mistake_msg = ""
                 self.message = "Sistema reiniciado.\nSuelte el boton!"
@@ -324,6 +325,8 @@ class Worker():
                 self.reset_count = 0
                 self.message = self.last_message
                 self.last_message = ""
+                if self.shift.current_step.type == StepType.Insert:
+                    self.message = "Instalar todos partes."
             self.reset_delay = 0
         return False
 
